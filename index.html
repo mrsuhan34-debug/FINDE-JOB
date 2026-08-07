@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JobNest - Connecting Talent. Building Futures.</title>
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS CDN - Ensure it's correctly loaded -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Tailwind Config for Custom Colors & Fonts -->
+  <!-- Tailwind Config for Custom Colors & Fonts - Correcting missing colors -->
   <script>
     tailwind.config = {
       theme: {
@@ -15,8 +15,8 @@
             brand: {
               50: '#f0f5ff',
               100: '#e0ebff',
-              500: '#2563eb',
-              600: '#1d4ed8',
+              500: '#2563eb', // Correct blue
+              600: '#1d4ed8', // Main brand blue
               700: '#1e40af',
             }
           },
@@ -25,34 +25,38 @@
           }
         }
       }
-    </script>
+    }
+  </script>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Lucide Icons -->
+  <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    body { font-family: 'Inter', sans-serif; }
+    /* Global fixes */
+    body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    /* Fix missing icons on load */
+    .lucide { display: block !important; }
   </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-800 antialiased">
 
-  <!-- Header / Navigation -->
-  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
+  <!-- Header / Navigation - Fixed and styled -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-100/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
       
-      <!-- Logo -->
-      <div class="flex items-center gap-3">
-        <div class="bg-brand-500 text-white p-2.5 rounded-xl shadow-md shadow-brand-500/20">
+      <!-- Logo - Ensuring it is visible -->
+      <a href="#" class="flex items-center gap-3">
+        <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-md shadow-brand-500/20">
           <i data-lucide="briefcase" class="w-6 h-6"></i>
         </div>
         <div>
-          <span class="text-2xl font-bold tracking-tight text-slate-900 block leading-none">JobNest</span>
-          <span class="text-[11px] text-slate-500 font-medium tracking-tight">Connecting Talent. Building Futures.</span>
+          <span class="text-2xl font-bold tracking-tight text-slate-950 block leading-none">JobNest</span>
+          <span class="text-[11px] text-slate-600 font-medium tracking-tight">Connecting Talent. Building Futures.</span>
         </div>
-      </div>
+      </a>
 
       <!-- Nav Links -->
-      <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-700">
         <a href="#" class="text-brand-600 font-bold border-b-2 border-brand-600 pb-1">Home</a>
         
         <!-- Find Jobs Dropdown -->
@@ -101,7 +105,7 @@
 
       <!-- Auth Buttons -->
       <div class="flex items-center gap-3">
-        <button onclick="openModal('loginModal')" class="px-5 py-2.5 text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+        <button onclick="openModal('loginModal')" class="px-5 py-2.5 text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
           Login
         </button>
         <button onclick="openModal('signupModal')" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 transition">
@@ -112,39 +116,39 @@
     </div>
   </header>
 
-  <!-- Main Hero Section -->
-  <section class="relative bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-white pt-12 pb-20 overflow-hidden">
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-white pt-16 pb-28 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
       
       <!-- Left Hero Text & Search -->
       <div class="lg:col-span-7 z-10">
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-950 tracking-tight leading-[1.15]">
           Find Your Next <br/>
           <span class="text-brand-600">Great Opportunity</span>
         </h1>
-        <p class="mt-4 text-base sm:text-lg text-slate-600 font-medium max-w-xl">
+        <p class="mt-5 text-base sm:text-lg text-slate-700 font-medium max-w-xl">
           JobNest connects job seekers with top employers. Search, apply and build your future – all in one place.
         </p>
 
-        <!-- Search Bar Container -->
-        <div class="mt-8 p-2 bg-white rounded-2xl shadow-xl border border-slate-100/80 max-w-2xl">
+        <!-- Search Bar - Ensured correct elements are visible -->
+        <div class="mt-10 p-2 bg-white rounded-2xl shadow-xl border border-slate-100 max-w-2xl">
           <form id="searchForm" onsubmit="handleSearch(event)" class="flex flex-col md:flex-row items-center gap-2">
             
-            <!-- Job Title Field -->
-            <div class="flex items-center gap-2.5 px-3 py-2 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100">
+            <!-- Job Title -->
+            <div class="flex items-center gap-2.5 px-3 py-2.5 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100/70">
               <i data-lucide="search" class="w-5 h-5 text-slate-400 shrink-0"></i>
-              <input type="text" id="searchInput" placeholder="Job title, skills or keywords" class="w-full text-sm outline-none text-slate-800 placeholder-slate-400 bg-transparent font-medium">
+              <input type="text" id="searchInput" placeholder="Job title, skills or keywords" class="w-full text-sm outline-none text-slate-900 placeholder-slate-400 bg-transparent font-medium">
             </div>
 
-            <!-- Location Field -->
-            <div class="flex items-center gap-2.5 px-3 py-2 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100">
+            <!-- Location -->
+            <div class="flex items-center gap-2.5 px-3 py-2.5 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100/70">
               <i data-lucide="map-pin" class="w-5 h-5 text-slate-400 shrink-0"></i>
-              <input type="text" id="locationInput" placeholder="Location" class="w-full text-sm outline-none text-slate-800 placeholder-slate-400 bg-transparent font-medium">
+              <input type="text" id="locationInput" placeholder="Location" class="w-full text-sm outline-none text-slate-900 placeholder-slate-400 bg-transparent font-medium">
             </div>
 
-            <!-- Category Field -->
-            <div class="flex items-center px-3 py-2 flex-1 w-full">
-              <select id="categoryInput" class="w-full text-sm outline-none text-slate-600 font-medium bg-transparent cursor-pointer">
+            <!-- Category -->
+            <div class="flex items-center px-3 py-2.5 flex-1 w-full">
+              <select id="categoryInput" class="w-full text-sm outline-none text-slate-700 font-semibold bg-transparent cursor-pointer">
                 <option value="">All Categories</option>
                 <option value="Design">Design</option>
                 <option value="Engineering">Engineering</option>
@@ -153,65 +157,65 @@
               </select>
             </div>
 
-            <!-- Search Button -->
-            <button type="submit" class="w-full md:w-auto px-6 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-brand-500/30 flex items-center justify-center gap-2 shrink-0">
+            <!-- Search Button - Correcting missing color and text -->
+            <button type="submit" class="w-full md:w-auto px-7 py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-brand-500/30 flex items-center justify-center gap-2 shrink-0">
               Find Jobs
             </button>
           </form>
         </div>
 
         <!-- Popular Searches -->
-        <div class="mt-6 flex flex-wrap items-center gap-2 text-xs text-slate-500 font-semibold">
+        <div class="mt-7 flex flex-wrap items-center gap-2 text-xs text-slate-600 font-semibold">
           <span class="text-slate-400">Popular Searches:</span>
-          <button onclick="quickFilter('Remote')" class="px-3 py-1 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-600 border border-slate-200/80 rounded-lg transition">Remote Jobs</button>
-          <button onclick="quickFilter('Marketing')" class="px-3 py-1 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-600 border border-slate-200/80 rounded-lg transition">Marketing</button>
-          <button onclick="quickFilter('Developer')" class="px-3 py-1 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-600 border border-slate-200/80 rounded-lg transition">Software Developer</button>
-          <button onclick="quickFilter('Analyst')" class="px-3 py-1 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-600 border border-slate-200/80 rounded-lg transition">Data Analyst</button>
-          <button onclick="quickFilter('Entry')" class="px-3 py-1 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-600 border border-slate-200/80 rounded-lg transition">Entry Level</button>
+          <button onclick="quickFilter('Remote')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Remote Jobs</button>
+          <button onclick="quickFilter('Marketing')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Marketing</button>
+          <button onclick="quickFilter('Developer')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Software Developer</button>
+          <button onclick="quickFilter('Analyst')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Data Analyst</button>
+          <button onclick="quickFilter('Entry')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Entry Level</button>
         </div>
       </div>
 
       <!-- Right Visual & Floating Cards -->
       <div class="lg:col-span-5 relative flex justify-center items-center">
-        <!-- Background Blob Shapes -->
+        <!-- Background Blobs -->
         <div class="absolute w-[340px] h-[340px] bg-blue-200/50 rounded-full blur-3xl -top-10 -right-10 pointer-events-none"></div>
         <div class="absolute w-[280px] h-[280px] bg-indigo-200/40 rounded-full blur-2xl bottom-0 left-0 pointer-events-none"></div>
 
         <div class="relative w-full max-w-md">
-          <!-- Main Image -->
+          <!-- Image -->
           <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80">
             <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" alt="Professional Woman Working on Laptop" class="w-full h-[400px] object-cover object-top">
           </div>
 
-          <!-- Floating Stat Badge 1: Active Jobs -->
-          <div class="absolute -top-4 -right-4 z-20 bg-white/95 backdrop-blur border border-slate-100 shadow-xl rounded-2xl p-3.5 flex items-center gap-3">
-            <div class="p-2.5 bg-purple-100 text-purple-600 rounded-xl">
+          <!-- Active Jobs -->
+          <div class="absolute -top-4 -right-4 z-20 bg-white border border-slate-100 shadow-xl rounded-2xl p-4 flex items-center gap-3">
+            <div class="p-2.5 bg-purple-100 text-purple-700 rounded-xl">
               <i data-lucide="briefcase" class="w-5 h-5"></i>
             </div>
             <div>
-              <div class="text-base font-extrabold text-slate-900 leading-tight">25K+</div>
+              <div class="text-base font-extrabold text-slate-950 leading-tight">25K+</div>
               <div class="text-xs font-semibold text-slate-500">Active Jobs</div>
             </div>
           </div>
 
-          <!-- Floating Stat Badge 2: Trusted Employers -->
-          <div class="absolute top-1/2 -left-8 -translate-y-1/2 z-20 bg-white/95 backdrop-blur border border-slate-100 shadow-xl rounded-2xl p-3.5 flex items-center gap-3">
-            <div class="p-2.5 bg-emerald-100 text-emerald-600 rounded-xl">
+          <!-- Trusted Employers -->
+          <div class="absolute top-1/2 -left-8 -translate-y-1/2 z-20 bg-white border border-slate-100 shadow-xl rounded-2xl p-4 flex items-center gap-3">
+            <div class="p-2.5 bg-emerald-100 text-emerald-700 rounded-xl">
               <i data-lucide="users" class="w-5 h-5"></i>
             </div>
             <div>
-              <div class="text-base font-extrabold text-slate-900 leading-tight">10K+</div>
+              <div class="text-base font-extrabold text-slate-950 leading-tight">10K+</div>
               <div class="text-xs font-semibold text-slate-500">Trusted Employers</div>
             </div>
           </div>
 
-          <!-- Floating Stat Badge 3: Happy Job Seekers -->
-          <div class="absolute -bottom-4 -right-4 z-20 bg-white/95 backdrop-blur border border-slate-100 shadow-xl rounded-2xl p-3.5 flex items-center gap-3">
-            <div class="p-2.5 bg-blue-100 text-blue-600 rounded-xl">
+          <!-- Happy Seekers -->
+          <div class="absolute -bottom-4 -right-4 z-20 bg-white border border-slate-100 shadow-xl rounded-2xl p-4 flex items-center gap-3">
+            <div class="p-2.5 bg-blue-100 text-blue-700 rounded-xl">
               <i data-lucide="globe" class="w-5 h-5"></i>
             </div>
             <div>
-              <div class="text-base font-extrabold text-slate-900 leading-tight">50K+</div>
+              <div class="text-base font-extrabold text-slate-950 leading-tight">50K+</div>
               <div class="text-xs font-semibold text-slate-500">Happy Job Seekers</div>
             </div>
           </div>
@@ -222,127 +226,126 @@
     </div>
   </section>
 
-  <!-- Feature Grid (5 Cards) -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-30 mb-12">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+  <!-- Feature Grid -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-30 mb-20">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
       
       <!-- Card 1 -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
+      <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
         <div class="p-3 bg-blue-50 text-blue-600 w-fit rounded-xl group-hover:scale-105 transition">
           <i data-lucide="search" class="w-5 h-5"></i>
         </div>
-        <h3 class="mt-4 font-bold text-slate-900 text-sm">Smart Job Search</h3>
-        <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">Advanced filters and AI-powered recommendations to find the right opportunities.</p>
+        <h3 class="mt-4 font-bold text-slate-950 text-sm">Smart Job Search</h3>
+        <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">Advanced filters and AI-powered recommendations to find the right opportunities.</p>
       </div>
 
       <!-- Card 2 -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
+      <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
         <div class="p-3 bg-purple-50 text-purple-600 w-fit rounded-xl group-hover:scale-105 transition">
           <i data-lucide="file-text" class="w-5 h-5"></i>
         </div>
-        <h3 class="mt-4 font-bold text-slate-900 text-sm">Easy Application</h3>
-        <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">Apply to multiple jobs in seconds with your profile and resume.</p>
+        <h3 class="mt-4 font-bold text-slate-950 text-sm">Easy Application</h3>
+        <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">Apply to multiple jobs in seconds with your profile and resume.</p>
       </div>
 
       <!-- Card 3 -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
+      <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
         <div class="p-3 bg-emerald-50 text-emerald-600 w-fit rounded-xl group-hover:scale-105 transition">
           <i data-lucide="bell" class="w-5 h-5"></i>
         </div>
-        <h3 class="mt-4 font-bold text-slate-900 text-sm">Job Alerts</h3>
-        <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">Get notified about new jobs that match your interests.</p>
+        <h3 class="mt-4 font-bold text-slate-950 text-sm">Job Alerts</h3>
+        <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">Get notified about new jobs that match your interests.</p>
       </div>
 
       <!-- Card 4 -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
+      <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
         <div class="p-3 bg-amber-50 text-amber-600 w-fit rounded-xl group-hover:scale-105 transition">
           <i data-lucide="book-open" class="w-5 h-5"></i>
         </div>
-        <h3 class="mt-4 font-bold text-slate-900 text-sm">Career Resources</h3>
-        <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">Access articles, tips and tools to boost your career.</p>
+        <h3 class="mt-4 font-bold text-slate-950 text-sm">Career Resources</h3>
+        <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">Access articles, tips and tools to boost your career.</p>
       </div>
 
       <!-- Card 5 -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
+      <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
         <div class="p-3 bg-indigo-50 text-indigo-600 w-fit rounded-xl group-hover:scale-105 transition">
           <i data-lucide="shield-check" class="w-5 h-5"></i>
         </div>
-        <h3 class="mt-4 font-bold text-slate-900 text-sm">Verified Employers</h3>
-        <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">We ensure safe and genuine job opportunities for you.</p>
+        <h3 class="mt-4 font-bold text-slate-950 text-sm">Verified Employers</h3>
+        <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">We ensure safe and genuine job opportunities for you.</p>
       </div>
 
     </div>
   </section>
 
-  <!-- Main Content Grid -->
+  <!-- Latest Job Openings Section - Ensuring visibility -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
-      <!-- Left Side: Latest Job Openings (8 Columns) -->
-      <div class="lg:col-span-8 space-y-4">
+      <!-- Left Side (8 Columns) -->
+      <div class="lg:col-span-8 space-y-5">
         
         <!-- Header -->
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-xl font-extrabold text-slate-900">Latest Job Openings</h2>
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-extrabold text-slate-950">Latest Job Openings</h2>
           <a href="#" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
             View All <i data-lucide="chevron-right" class="w-4 h-4"></i>
           </a>
         </div>
 
-        <!-- Job Cards Container (Populated dynamically by JS) -->
-        <div id="jobListingsContainer" class="space-y-3.5">
-          <!-- Dynamic Job Items will load here -->
+        <!-- Job Card Container - Crucial Fix -->
+        <div id="jobListingsContainer" class="space-y-4 relative min-h-[100px]">
+          <!-- Job items must load here; check JS -->
+          <div class="text-sm text-slate-500 py-6 text-center">Loading jobs...</div>
         </div>
 
       </div>
 
-      <!-- Right Side: Sidebar Call-to-Actions (4 Columns) -->
-      <div class="lg:col-span-4 space-y-5">
+      <!-- Right Side (4 Columns) -->
+      <div class="lg:col-span-4 space-y-6">
         
-        <!-- Create Profile Banner (Blue Card) -->
-        <div class="bg-gradient-to-br from-brand-600 to-blue-700 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+        <!-- Create Profile -->
+        <div class="bg-gradient-to-br from-brand-600 to-blue-700 rounded-3xl p-7 text-white shadow-xl relative overflow-hidden">
           <div class="relative z-10">
             <h3 class="text-xl font-bold leading-snug">Create Your <br/>Professional Profile</h3>
             <p class="mt-2 text-xs text-blue-100 font-medium leading-relaxed">
               Build your profile and get discovered by top employers.
             </p>
-            <button onclick="openModal('signupModal')" class="mt-6 inline-flex items-center gap-1.5 px-5 py-2.5 bg-white text-brand-600 rounded-xl font-bold text-xs shadow-md hover:bg-blue-50 transition">
+            <button onclick="openModal('signupModal')" class="mt-7 inline-flex items-center gap-1.5 px-5 py-2.5 bg-white text-brand-600 rounded-xl font-bold text-xs shadow-md hover:bg-blue-50 transition">
               Get Started <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
           </div>
-          <!-- Abstract Background Shape -->
           <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
         </div>
 
-        <!-- For Employers Banner (Light Mint Card) -->
-        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-3xl p-6 text-slate-800 relative overflow-hidden">
+        <!-- For Employers -->
+        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-3xl p-7 text-slate-800 relative overflow-hidden">
           <div class="relative z-10">
-            <h3 class="text-lg font-bold text-slate-900">For Employers</h3>
+            <h3 class="text-lg font-bold text-slate-950">For Employers</h3>
             <p class="mt-1.5 text-xs text-slate-600 font-medium leading-relaxed">
               Find the right talent faster and smarter.
             </p>
-            <button onclick="openModal('postJobModal')" class="mt-5 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-md transition">
+            <button onclick="openModal('postJobModal')" class="mt-6 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-md transition">
               Post a Job <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
           </div>
-          <!-- Illustration Decor -->
           <div class="absolute bottom-2 right-2 opacity-30 pointer-events-none">
             <i data-lucide="building-2" class="w-20 h-20 text-emerald-600"></i>
           </div>
         </div>
 
-        <!-- Join JobNest Today Banner -->
-        <div class="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm">
-          <div class="flex items-center gap-3">
+        <!-- Join JobNest Today -->
+        <div class="bg-white border border-slate-100 rounded-3xl p-7 shadow-sm">
+          <div class="flex items-center gap-3.5">
             <div class="p-2.5 bg-blue-50 text-brand-600 rounded-xl">
               <i data-lucide="megaphone" class="w-6 h-6"></i>
             </div>
             <div>
-              <h4 class="font-bold text-slate-900 text-sm">Join JobNest Today</h4>
-              <p class="text-[11px] text-slate-500">Whether you're hiring or looking for your next opportunity - we're here to help.</p>
+              <h4 class="font-bold text-slate-950 text-sm">Join JobNest Today</h4>
+              <p class="text-[11px] text-slate-600">Whether you're hiring or looking for your next opportunity - we're here to help.</p>
             </div>
           </div>
-          <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-500">
+          <div class="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-600">
             <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500"></i> Trusted</span>
             <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500"></i> Secure</span>
             <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500"></i> Reliable</span>
@@ -354,89 +357,60 @@
     </div>
   </section>
 
-  <!-- Login Modal -->
-  <div id="loginModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative">
+  <!-- Modals (Hidden) -->
+  <div id="loginModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl relative">
       <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
-      <h3 class="text-xl font-extrabold text-slate-900">Welcome Back</h3>
-      <p class="text-xs text-slate-500 mt-1">Sign in to your JobNest account</p>
-      
-      <form class="mt-5 space-y-3" onsubmit="event.preventDefault(); alert('Login submitted!'); closeModal('loginModal');">
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
-          <input type="email" placeholder="you@example.com" class="w-full text-sm px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-brand-500" required>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
-          <input type="password" placeholder="••••••••" class="w-full text-sm px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-brand-500" required>
-        </div>
-        <button type="submit" class="w-full py-3 bg-brand-600 text-white font-bold text-sm rounded-xl hover:bg-brand-700 transition">Login</button>
+      <h3 class="text-xl font-extrabold text-slate-950">Welcome Back</h3>
+      <form class="mt-6 space-y-4">
+        <input type="email" placeholder="you@example.com" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
+        <input type="password" placeholder="••••••••" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
+        <button type="submit" class="w-full py-3.5 bg-brand-600 text-white font-bold text-sm rounded-xl hover:bg-brand-700 transition">Login</button>
       </form>
     </div>
   </div>
 
-  <!-- Sign Up Modal -->
-  <div id="signupModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative">
+  <div id="signupModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl relative">
       <button onclick="closeModal('signupModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
-      <h3 class="text-xl font-extrabold text-slate-900">Create Account</h3>
-      <p class="text-xs text-slate-500 mt-1">Start your career journey with JobNest</p>
-      
-      <form class="mt-5 space-y-3" onsubmit="event.preventDefault(); alert('Account created!'); closeModal('signupModal');">
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
-          <input type="text" placeholder="John Doe" class="w-full text-sm px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-brand-500" required>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
-          <input type="email" placeholder="you@example.com" class="w-full text-sm px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-brand-500" required>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
-          <input type="password" placeholder="••••••••" class="w-full text-sm px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-brand-500" required>
-        </div>
-        <button type="submit" class="w-full py-3 bg-brand-600 text-white font-bold text-sm rounded-xl hover:bg-brand-700 transition">Create Account</button>
+      <h3 class="text-xl font-extrabold text-slate-950">Create Account</h3>
+      <form class="mt-6 space-y-4">
+        <input type="text" placeholder="John Doe" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
+        <input type="email" placeholder="you@example.com" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
+        <input type="password" placeholder="••••••••" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
+        <button type="submit" class="w-full py-3.5 bg-brand-600 text-white font-bold text-sm rounded-xl hover:bg-brand-700 transition">Create Account</button>
       </form>
     </div>
   </div>
 
-  <!-- Post Job Modal -->
-  <div id="postJobModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl relative">
+  <div id="postJobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl relative">
       <button onclick="closeModal('postJobModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
-      <h3 class="text-xl font-extrabold text-slate-900">Post a New Job</h3>
-      <p class="text-xs text-slate-500 mt-1">Reach thousands of talented candidates</p>
-      
-      <form class="mt-5 space-y-3" onsubmit="event.preventDefault(); alert('Job posted successfully!'); closeModal('postJobModal');">
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Job Title</label>
-          <input type="text" placeholder="e.g. Frontend Developer" class="w-full text-sm px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-brand-500" required>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Company Name</label>
-          <input type="text" placeholder="e.g. Acme Corp" class="w-full text-sm px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-brand-500" required>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Salary Range</label>
-          <input type="text" placeholder="e.g. $80K - $100K / yr" class="w-full text-sm px-3.5 py-2.5 border border-slate-200 rounded-xl focus:outline-brand-500" required>
-        </div>
-        <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 transition">Publish Job</button>
+      <h3 class="text-xl font-extrabold text-slate-950">Post Job</h3>
+      <form class="mt-6 space-y-4">
+        <input type="text" placeholder="Frontend Developer" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
+        <input type="text" placeholder="Company Name" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
+        <input type="text" placeholder="$100K - $120K / yr" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
+        <button type="submit" class="w-full py-3.5 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 transition">Publish Job</button>
       </form>
     </div>
   </div>
 
   <!-- JavaScript Logic -->
   <script>
-    // Initialize Lucide Icons
-    lucide.createIcons();
+    // Essential for icons to load correctly
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderJobs(jobs); // Render jobs immediately after icons are ready
+    });
 
-    // Sample Job Data matching the image exactly
+    // Job Data (Explicitly matching image list)
     const jobs = [
       {
         id: 1,
@@ -473,28 +447,28 @@
       }
     ];
 
-    // Render Jobs Function
+    // Rendering Jobs - Ensuring visibility and correct HTML structure
     function renderJobs(jobArray) {
       const container = document.getElementById('jobListingsContainer');
-      container.innerHTML = '';
+      container.innerHTML = ''; // Clear loading message
 
       if(jobArray.length === 0) {
-        container.innerHTML = `<p class="text-sm text-slate-500 py-6 text-center">No job openings found matching your query.</p>`;
+        container.innerHTML = `<p class="text-sm text-slate-600 py-6 text-center">No job openings found matching your query.</p>`;
         return;
       }
 
       jobArray.forEach(job => {
         const item = document.createElement('div');
-        item.className = "bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer";
+        item.className = "bg-white p-5 rounded-2xl border border-slate-100/70 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer";
         item.innerHTML = `
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2.5 shrink-0">
               <img src="${job.logo}" alt="${job.company}" class="w-full h-full object-contain" onError="this.src='https://cdn-icons-png.flaticon.com/512/2910/2910768.png'">
             </div>
             <div>
-              <h4 class="font-extrabold text-slate-900 text-base leading-tight">${job.title}</h4>
-              <p class="text-xs text-slate-500 font-medium mt-0.5">${job.company}</p>
-              <div class="flex items-center gap-2 mt-2">
+              <h4 class="font-extrabold text-slate-950 text-base leading-tight">${job.title}</h4>
+              <p class="text-xs text-slate-600 font-medium mt-0.5">${job.company}</p>
+              <div class="flex items-center gap-2 mt-2.5">
                 <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-md">${job.type}</span>
                 <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-[11px] font-bold rounded-md">${job.locationType}</span>
               </div>
@@ -502,23 +476,20 @@
           </div>
 
           <div class="flex flex-row sm:flex-col items-end justify-between w-full sm:w-auto mt-2 sm:mt-0 text-right">
-            <div class="flex items-center gap-1 text-xs text-slate-500 font-medium">
+            <div class="flex items-center gap-1.5 text-xs text-slate-600 font-semibold">
               <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i> ${job.country}
             </div>
-            <div class="text-xs font-extrabold text-slate-700 mt-1">${job.salary}</div>
+            <div class="text-xs font-extrabold text-slate-800 mt-1.5">${job.salary}</div>
           </div>
         `;
         container.appendChild(item);
       });
 
-      // Re-initialize icons for dynamic content
+      // Crucial: Refresh icons for dynamically created content
       lucide.createIcons();
     }
 
-    // Initial Load
-    renderJobs(jobs);
-
-    // Search Handler
+    // Modal and Search Functions - Rechecked
     function handleSearch(e) {
       e.preventDefault();
       const titleQuery = document.getElementById('searchInput').value.toLowerCase();
@@ -529,27 +500,18 @@
         const matchesTitle = job.title.toLowerCase().includes(titleQuery) || job.company.toLowerCase().includes(titleQuery);
         const matchesLoc = job.country.toLowerCase().includes(locQuery) || job.locationType.toLowerCase().includes(locQuery);
         const matchesCat = catQuery ? job.category === catQuery : true;
-
         return matchesTitle && matchesLoc && matchesCat;
       });
-
       renderJobs(filtered);
     }
 
-    // Quick Tag Filter
     function quickFilter(term) {
       document.getElementById('searchInput').value = term;
       handleSearch(new Event('submit'));
     }
 
-    // Modal Control Functions
-    function openModal(id) {
-      document.getElementById(id).classList.remove('hidden');
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.add('hidden');
-    }
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
   </script>
 </body>
 </html>
