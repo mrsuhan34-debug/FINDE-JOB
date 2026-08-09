@@ -4,47 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JobNest - Connecting Talent. Building Futures.</title>
-  <!-- Tailwind CSS CDN - Ensure it's correctly loaded -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Tailwind Config for Custom Colors & Fonts - Correcting missing colors -->
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#f0f5ff',
-              100: '#e0ebff',
-              500: '#2563eb', // Correct blue
-              600: '#1d4ed8', // Main brand blue
-              700: '#1e40af',
-            }
+            brand: { 50: '#f0f5ff', 100: '#e0ebff', 500: '#2563eb', 600: '#1d4ed8', 700: '#1e40af' }
           },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-          }
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
         }
       }
     }
   </script>
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* Global fixes */
     body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
-    /* Fix missing icons on load */
     .lucide { display: block !important; }
   </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-800 antialiased">
 
-  <!-- Header / Navigation - Fixed and styled -->
+  <!-- Header / Navigation -->
   <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-100/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-      
-      <!-- Logo - Ensuring it is visible -->
+
       <a href="#" class="flex items-center gap-3">
         <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-md shadow-brand-500/20">
           <i data-lucide="briefcase" class="w-6 h-6"></i>
@@ -55,62 +40,50 @@
         </div>
       </a>
 
-      <!-- Nav Links -->
       <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-700">
         <a href="#" class="text-brand-600 font-bold border-b-2 border-brand-600 pb-1">Home</a>
-        
-        <!-- Find Jobs Dropdown -->
         <div class="relative group">
           <button class="flex items-center gap-1 hover:text-brand-600 transition">
             Find Jobs <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
           </button>
           <div class="absolute left-0 top-full pt-2 w-48 hidden group-hover:block">
             <div class="bg-white rounded-xl shadow-xl border border-slate-100 p-2 text-slate-700">
-              <a href="#" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Browse All Jobs</a>
-              <a href="#" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Remote Jobs</a>
-              <a href="#" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Tech & IT</a>
+              <a href="#jobListingsContainer" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Browse All Jobs</a>
+              <a href="#" onclick="quickFilter('', 'Remote'); return false;" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Remote Jobs</a>
+              <a href="#" onclick="quickFilterCategory('Engineering'); return false;" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Tech & IT</a>
             </div>
           </div>
         </div>
-
-        <!-- Employers Dropdown -->
         <div class="relative group">
           <button class="flex items-center gap-1 hover:text-brand-600 transition">
             Employers <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
           </button>
           <div class="absolute left-0 top-full pt-2 w-48 hidden group-hover:block">
             <div class="bg-white rounded-xl shadow-xl border border-slate-100 p-2 text-slate-700">
-              <a href="#" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Post a Job</a>
-              <a href="#" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Talent Solutions</a>
+              <a href="#" onclick="openModal('postJobModal'); return false;" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Post a Job</a>
             </div>
           </div>
         </div>
-
-        <!-- Resources Dropdown -->
-        <div class="relative group">
-          <button class="flex items-center gap-1 hover:text-brand-600 transition">
-            Resources <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
-          </button>
-          <div class="absolute left-0 top-full pt-2 w-48 hidden group-hover:block">
-            <div class="bg-white rounded-xl shadow-xl border border-slate-100 p-2 text-slate-700">
-              <a href="#" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Career Blog</a>
-              <a href="#" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Resume Builder</a>
-            </div>
-          </div>
-        </div>
-
         <a href="#" class="hover:text-brand-600 transition">Pricing</a>
         <a href="#" class="hover:text-brand-600 transition">About Us</a>
       </nav>
 
-      <!-- Auth Buttons -->
+      <!-- Auth Buttons: swapped between logged-out / logged-in state by JS -->
       <div class="flex items-center gap-3">
-        <button onclick="openModal('loginModal')" class="px-5 py-2.5 text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
-          Login
-        </button>
-        <button onclick="openModal('signupModal')" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 transition">
-          Sign Up
-        </button>
+        <div id="authButtons" class="flex items-center gap-3">
+          <button onclick="openModal('loginModal')" class="px-5 py-2.5 text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+            Login
+          </button>
+          <button onclick="openModal('signupModal')" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 transition">
+            Sign Up
+          </button>
+        </div>
+        <div id="userMenu" class="hidden items-center gap-3">
+          <span id="userGreeting" class="text-sm font-bold text-slate-700 hidden sm:inline"></span>
+          <button onclick="logoutUser()" class="px-4 py-2.5 text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center gap-1.5">
+            <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+          </button>
+        </div>
       </div>
 
     </div>
@@ -119,8 +92,7 @@
   <!-- Hero Section -->
   <section class="relative bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-white pt-16 pb-28 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-      
-      <!-- Left Hero Text & Search -->
+
       <div class="lg:col-span-7 z-10">
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-950 tracking-tight leading-[1.15]">
           Find Your Next <br/>
@@ -130,23 +102,16 @@
           JobNest connects job seekers with top employers. Search, apply and build your future – all in one place.
         </p>
 
-        <!-- Search Bar - Ensured correct elements are visible -->
         <div class="mt-10 p-2 bg-white rounded-2xl shadow-xl border border-slate-100 max-w-2xl">
           <form id="searchForm" onsubmit="handleSearch(event)" class="flex flex-col md:flex-row items-center gap-2">
-            
-            <!-- Job Title -->
             <div class="flex items-center gap-2.5 px-3 py-2.5 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100/70">
               <i data-lucide="search" class="w-5 h-5 text-slate-400 shrink-0"></i>
               <input type="text" id="searchInput" placeholder="Job title, skills or keywords" class="w-full text-sm outline-none text-slate-900 placeholder-slate-400 bg-transparent font-medium">
             </div>
-
-            <!-- Location -->
             <div class="flex items-center gap-2.5 px-3 py-2.5 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100/70">
               <i data-lucide="map-pin" class="w-5 h-5 text-slate-400 shrink-0"></i>
               <input type="text" id="locationInput" placeholder="Location" class="w-full text-sm outline-none text-slate-900 placeholder-slate-400 bg-transparent font-medium">
             </div>
-
-            <!-- Category -->
             <div class="flex items-center px-3 py-2.5 flex-1 w-full">
               <select id="categoryInput" class="w-full text-sm outline-none text-slate-700 font-semibold bg-transparent cursor-pointer">
                 <option value="">All Categories</option>
@@ -156,161 +121,97 @@
                 <option value="Marketing">Marketing</option>
               </select>
             </div>
-
-            <!-- Search Button - Correcting missing color and text -->
             <button type="submit" class="w-full md:w-auto px-7 py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-brand-500/30 flex items-center justify-center gap-2 shrink-0">
               Find Jobs
             </button>
           </form>
         </div>
 
-        <!-- Popular Searches -->
         <div class="mt-7 flex flex-wrap items-center gap-2 text-xs text-slate-600 font-semibold">
           <span class="text-slate-400">Popular Searches:</span>
-          <button onclick="quickFilter('Remote')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Remote Jobs</button>
-          <button onclick="quickFilter('Marketing')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Marketing</button>
-          <button onclick="quickFilter('Developer')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Software Developer</button>
-          <button onclick="quickFilter('Analyst')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Data Analyst</button>
-          <button onclick="quickFilter('Entry')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Entry Level</button>
+          <button onclick="quickFilter('', 'Remote')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Remote Jobs</button>
+          <button onclick="quickFilterCategory('Marketing')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Marketing</button>
+          <button onclick="quickFilter('Developer', '')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Software Developer</button>
+          <button onclick="quickFilter('Analyst', '')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Data Analyst</button>
+          <button onclick="quickFilter('Entry', '')" class="px-3.5 py-1.5 bg-white hover:bg-brand-50 hover:text-brand-600 text-slate-700 border border-slate-200/80 rounded-lg transition">Entry Level</button>
         </div>
       </div>
 
-      <!-- Right Visual & Floating Cards -->
       <div class="lg:col-span-5 relative flex justify-center items-center">
-        <!-- Background Blobs -->
         <div class="absolute w-[340px] h-[340px] bg-blue-200/50 rounded-full blur-3xl -top-10 -right-10 pointer-events-none"></div>
         <div class="absolute w-[280px] h-[280px] bg-indigo-200/40 rounded-full blur-2xl bottom-0 left-0 pointer-events-none"></div>
-
         <div class="relative w-full max-w-md">
-          <!-- Image -->
           <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80">
             <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" alt="Professional Woman Working on Laptop" class="w-full h-[400px] object-cover object-top">
           </div>
-
-          <!-- Active Jobs -->
           <div class="absolute -top-4 -right-4 z-20 bg-white border border-slate-100 shadow-xl rounded-2xl p-4 flex items-center gap-3">
-            <div class="p-2.5 bg-purple-100 text-purple-700 rounded-xl">
-              <i data-lucide="briefcase" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <div class="text-base font-extrabold text-slate-950 leading-tight">25K+</div>
-              <div class="text-xs font-semibold text-slate-500">Active Jobs</div>
-            </div>
+            <div class="p-2.5 bg-purple-100 text-purple-700 rounded-xl"><i data-lucide="briefcase" class="w-5 h-5"></i></div>
+            <div><div class="text-base font-extrabold text-slate-950 leading-tight">25K+</div><div class="text-xs font-semibold text-slate-500">Active Jobs</div></div>
           </div>
-
-          <!-- Trusted Employers -->
           <div class="absolute top-1/2 -left-8 -translate-y-1/2 z-20 bg-white border border-slate-100 shadow-xl rounded-2xl p-4 flex items-center gap-3">
-            <div class="p-2.5 bg-emerald-100 text-emerald-700 rounded-xl">
-              <i data-lucide="users" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <div class="text-base font-extrabold text-slate-950 leading-tight">10K+</div>
-              <div class="text-xs font-semibold text-slate-500">Trusted Employers</div>
-            </div>
+            <div class="p-2.5 bg-emerald-100 text-emerald-700 rounded-xl"><i data-lucide="users" class="w-5 h-5"></i></div>
+            <div><div class="text-base font-extrabold text-slate-950 leading-tight">10K+</div><div class="text-xs font-semibold text-slate-500">Trusted Employers</div></div>
           </div>
-
-          <!-- Happy Seekers -->
           <div class="absolute -bottom-4 -right-4 z-20 bg-white border border-slate-100 shadow-xl rounded-2xl p-4 flex items-center gap-3">
-            <div class="p-2.5 bg-blue-100 text-blue-700 rounded-xl">
-              <i data-lucide="globe" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <div class="text-base font-extrabold text-slate-950 leading-tight">50K+</div>
-              <div class="text-xs font-semibold text-slate-500">Happy Job Seekers</div>
-            </div>
+            <div class="p-2.5 bg-blue-100 text-blue-700 rounded-xl"><i data-lucide="globe" class="w-5 h-5"></i></div>
+            <div><div class="text-base font-extrabold text-slate-950 leading-tight">50K+</div><div class="text-xs font-semibold text-slate-500">Happy Job Seekers</div></div>
           </div>
         </div>
-
       </div>
-
     </div>
   </section>
 
   <!-- Feature Grid -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-30 mb-20">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-      
-      <!-- Card 1 -->
       <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
-        <div class="p-3 bg-blue-50 text-blue-600 w-fit rounded-xl group-hover:scale-105 transition">
-          <i data-lucide="search" class="w-5 h-5"></i>
-        </div>
+        <div class="p-3 bg-blue-50 text-blue-600 w-fit rounded-xl group-hover:scale-105 transition"><i data-lucide="search" class="w-5 h-5"></i></div>
         <h3 class="mt-4 font-bold text-slate-950 text-sm">Smart Job Search</h3>
         <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">Advanced filters and AI-powered recommendations to find the right opportunities.</p>
       </div>
-
-      <!-- Card 2 -->
       <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
-        <div class="p-3 bg-purple-50 text-purple-600 w-fit rounded-xl group-hover:scale-105 transition">
-          <i data-lucide="file-text" class="w-5 h-5"></i>
-        </div>
+        <div class="p-3 bg-purple-50 text-purple-600 w-fit rounded-xl group-hover:scale-105 transition"><i data-lucide="file-text" class="w-5 h-5"></i></div>
         <h3 class="mt-4 font-bold text-slate-950 text-sm">Easy Application</h3>
         <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">Apply to multiple jobs in seconds with your profile and resume.</p>
       </div>
-
-      <!-- Card 3 -->
       <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
-        <div class="p-3 bg-emerald-50 text-emerald-600 w-fit rounded-xl group-hover:scale-105 transition">
-          <i data-lucide="bell" class="w-5 h-5"></i>
-        </div>
+        <div class="p-3 bg-emerald-50 text-emerald-600 w-fit rounded-xl group-hover:scale-105 transition"><i data-lucide="bell" class="w-5 h-5"></i></div>
         <h3 class="mt-4 font-bold text-slate-950 text-sm">Job Alerts</h3>
         <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">Get notified about new jobs that match your interests.</p>
       </div>
-
-      <!-- Card 4 -->
       <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
-        <div class="p-3 bg-amber-50 text-amber-600 w-fit rounded-xl group-hover:scale-105 transition">
-          <i data-lucide="book-open" class="w-5 h-5"></i>
-        </div>
+        <div class="p-3 bg-amber-50 text-amber-600 w-fit rounded-xl group-hover:scale-105 transition"><i data-lucide="book-open" class="w-5 h-5"></i></div>
         <h3 class="mt-4 font-bold text-slate-950 text-sm">Career Resources</h3>
         <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">Access articles, tips and tools to boost your career.</p>
       </div>
-
-      <!-- Card 5 -->
       <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition group cursor-pointer">
-        <div class="p-3 bg-indigo-50 text-indigo-600 w-fit rounded-xl group-hover:scale-105 transition">
-          <i data-lucide="shield-check" class="w-5 h-5"></i>
-        </div>
+        <div class="p-3 bg-indigo-50 text-indigo-600 w-fit rounded-xl group-hover:scale-105 transition"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
         <h3 class="mt-4 font-bold text-slate-950 text-sm">Verified Employers</h3>
         <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">We ensure safe and genuine job opportunities for you.</p>
       </div>
-
     </div>
   </section>
 
-  <!-- Latest Job Openings Section - Ensuring visibility -->
+  <!-- Latest Job Openings -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      
-      <!-- Left Side (8 Columns) -->
       <div class="lg:col-span-8 space-y-5">
-        
-        <!-- Header -->
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-extrabold text-slate-950">Latest Job Openings</h2>
-          <a href="#" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+          <a href="#" onclick="loadJobs(); return false;" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
             View All <i data-lucide="chevron-right" class="w-4 h-4"></i>
           </a>
         </div>
-
-        <!-- Job Card Container - Crucial Fix -->
         <div id="jobListingsContainer" class="space-y-4 relative min-h-[100px]">
-          <!-- Job items must load here; check JS -->
           <div class="text-sm text-slate-500 py-6 text-center">Loading jobs...</div>
         </div>
-
       </div>
 
-      <!-- Right Side (4 Columns) -->
       <div class="lg:col-span-4 space-y-6">
-        
-        <!-- Create Profile -->
         <div class="bg-gradient-to-br from-brand-600 to-blue-700 rounded-3xl p-7 text-white shadow-xl relative overflow-hidden">
           <div class="relative z-10">
             <h3 class="text-xl font-bold leading-snug">Create Your <br/>Professional Profile</h3>
-            <p class="mt-2 text-xs text-blue-100 font-medium leading-relaxed">
-              Build your profile and get discovered by top employers.
-            </p>
+            <p class="mt-2 text-xs text-blue-100 font-medium leading-relaxed">Build your profile and get discovered by top employers.</p>
             <button onclick="openModal('signupModal')" class="mt-7 inline-flex items-center gap-1.5 px-5 py-2.5 bg-white text-brand-600 rounded-xl font-bold text-xs shadow-md hover:bg-blue-50 transition">
               Get Started <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
@@ -318,28 +219,20 @@
           <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
         </div>
 
-        <!-- For Employers -->
         <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-3xl p-7 text-slate-800 relative overflow-hidden">
           <div class="relative z-10">
             <h3 class="text-lg font-bold text-slate-950">For Employers</h3>
-            <p class="mt-1.5 text-xs text-slate-600 font-medium leading-relaxed">
-              Find the right talent faster and smarter.
-            </p>
+            <p class="mt-1.5 text-xs text-slate-600 font-medium leading-relaxed">Find the right talent faster and smarter.</p>
             <button onclick="openModal('postJobModal')" class="mt-6 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-md transition">
               Post a Job <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
           </div>
-          <div class="absolute bottom-2 right-2 opacity-30 pointer-events-none">
-            <i data-lucide="building-2" class="w-20 h-20 text-emerald-600"></i>
-          </div>
+          <div class="absolute bottom-2 right-2 opacity-30 pointer-events-none"><i data-lucide="building-2" class="w-20 h-20 text-emerald-600"></i></div>
         </div>
 
-        <!-- Join JobNest Today -->
         <div class="bg-white border border-slate-100 rounded-3xl p-7 shadow-sm">
           <div class="flex items-center gap-3.5">
-            <div class="p-2.5 bg-blue-50 text-brand-600 rounded-xl">
-              <i data-lucide="megaphone" class="w-6 h-6"></i>
-            </div>
+            <div class="p-2.5 bg-blue-50 text-brand-600 rounded-xl"><i data-lucide="megaphone" class="w-6 h-6"></i></div>
             <div>
               <h4 class="font-bold text-slate-950 text-sm">Join JobNest Today</h4>
               <p class="text-[11px] text-slate-600">Whether you're hiring or looking for your next opportunity - we're here to help.</p>
@@ -351,167 +244,350 @@
             <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500"></i> Reliable</span>
           </div>
         </div>
-
       </div>
-
     </div>
   </section>
 
-  <!-- Modals (Hidden) -->
+  <!-- Login Modal -->
   <div id="loginModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl relative">
-      <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
+      <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       <h3 class="text-xl font-extrabold text-slate-950">Welcome Back</h3>
-      <form class="mt-6 space-y-4">
-        <input type="email" placeholder="you@example.com" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
-        <input type="password" placeholder="••••••••" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
-        <button type="submit" class="w-full py-3.5 bg-brand-600 text-white font-bold text-sm rounded-xl hover:bg-brand-700 transition">Login</button>
+      <form id="loginForm" class="mt-6 space-y-4">
+        <input type="email" id="loginEmail" required placeholder="you@example.com" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <div id="loginError" class="hidden text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3"></div>
+        <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 bg-brand-600 text-white font-bold text-sm rounded-xl hover:bg-brand-700 transition">Login</button>
       </form>
     </div>
   </div>
 
+  <!-- Signup Modal -->
   <div id="signupModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl relative">
-      <button onclick="closeModal('signupModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
+      <button onclick="closeModal('signupModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       <h3 class="text-xl font-extrabold text-slate-950">Create Account</h3>
-      <form class="mt-6 space-y-4">
-        <input type="text" placeholder="John Doe" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
-        <input type="email" placeholder="you@example.com" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
-        <input type="password" placeholder="••••••••" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
-        <button type="submit" class="w-full py-3.5 bg-brand-600 text-white font-bold text-sm rounded-xl hover:bg-brand-700 transition">Create Account</button>
+      <form id="signupForm" class="mt-6 space-y-4">
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" data-role="seeker" onclick="setSignupRole('seeker')" class="signupRoleBtn px-3 py-2.5 rounded-xl text-xs font-bold border-2 border-brand-600 bg-brand-50 text-brand-700">Job Seeker</button>
+          <button type="button" data-role="employer" onclick="setSignupRole('employer')" class="signupRoleBtn px-3 py-2.5 rounded-xl text-xs font-bold border-2 border-slate-200 text-slate-600">Employer</button>
+        </div>
+        <input type="text" id="signupName" required placeholder="John Doe" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="email" id="signupEmail" required placeholder="you@example.com" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="password" id="signupPassword" required placeholder="•••••••• (min 6 characters)" minlength="6" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="text" id="signupCompany" placeholder="Company Name" class="hidden w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <div id="signupError" class="hidden text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3"></div>
+        <button type="submit" id="signupSubmitBtn" class="w-full py-3.5 bg-brand-600 text-white font-bold text-sm rounded-xl hover:bg-brand-700 transition">Create Account</button>
       </form>
     </div>
   </div>
 
-  <div id="postJobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl relative">
-      <button onclick="closeModal('postJobModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-      <h3 class="text-xl font-extrabold text-slate-950">Post Job</h3>
-      <form class="mt-6 space-y-4">
-        <input type="text" placeholder="Frontend Developer" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
-        <input type="text" placeholder="Company Name" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
-        <input type="text" placeholder="$100K - $120K / yr" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-brand-500">
-        <button type="submit" class="w-full py-3.5 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 transition">Publish Job</button>
+  <!-- Post Job Modal -->
+  <div id="postJobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl relative my-8">
+      <button onclick="closeModal('postJobModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <h3 class="text-xl font-extrabold text-slate-950">Post a Job</h3>
+      <p id="postJobHint" class="text-xs text-slate-500 mt-1">You need to be logged in as an Employer to post a job.</p>
+      <form id="postJobForm" class="mt-6 space-y-3">
+        <input type="text" id="jobTitle" required placeholder="Job Title (e.g. Frontend Developer)" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="text" id="jobCompanyName" placeholder="Company Name" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <textarea id="jobDescription" required rows="3" placeholder="Job description" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500"></textarea>
+        <div class="grid grid-cols-2 gap-2">
+          <select id="jobCategory" class="text-sm px-3 py-3 border border-slate-200 rounded-xl outline-none">
+            <option value="">Category</option>
+            <option value="Design">Design</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Analytics">Analytics</option>
+            <option value="Marketing">Marketing</option>
+          </select>
+          <select id="jobType" class="text-sm px-3 py-3 border border-slate-200 rounded-xl outline-none">
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <select id="jobLocationType" class="text-sm px-3 py-3 border border-slate-200 rounded-xl outline-none">
+            <option value="Remote">Remote</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="On-site">On-site</option>
+          </select>
+          <input type="text" id="jobCountry" placeholder="Country" class="text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        </div>
+        <input type="text" id="jobSalary" placeholder="$100K - $120K / yr" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <div id="postJobError" class="hidden text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3"></div>
+        <button type="submit" id="postJobSubmitBtn" class="w-full py-3.5 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 transition">Publish Job</button>
       </form>
     </div>
   </div>
 
-  <!-- JavaScript Logic -->
   <script>
-    // Essential for icons to load correctly
+    const API_BASE = ''; // same-origin — index.html and /api/* live on the same Vercel domain
+
+    let authToken = localStorage.getItem('jobnest_token') || null;
+    let currentUser = JSON.parse(localStorage.getItem('jobnest_user') || 'null');
+    let signupRole = 'seeker';
+
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      renderJobs(jobs); // Render jobs immediately after icons are ready
+      updateAuthUI();
+      loadJobs();
     });
 
-    // Job Data (Explicitly matching image list)
-    const jobs = [
-      {
-        id: 1,
-        title: "Product Designer",
-        company: "Google",
-        logo: "https://www.google.com/favicon.ico",
-        type: "Full-time",
-        locationType: "Remote",
-        country: "USA",
-        salary: "$120K - $150K / yr",
-        category: "Design"
-      },
-      {
-        id: 2,
-        title: "Software Engineer",
-        company: "Microsoft",
-        logo: "https://www.microsoft.com/favicon.ico",
-        type: "Full-time",
-        locationType: "Hybrid",
-        country: "India",
-        salary: "₹15L - ₹25L / yr",
-        category: "Engineering"
-      },
-      {
-        id: 3,
-        title: "Data Analyst",
-        company: "Amazon",
-        logo: "https://www.amazon.com/favicon.ico",
-        type: "Full-time",
-        locationType: "Remote",
-        country: "United Kingdom",
-        salary: "£40K - £60K / yr",
-        category: "Analytics"
+    // ---------------- Auth UI ----------------
+    function updateAuthUI() {
+      const authButtons = document.getElementById('authButtons');
+      const userMenu = document.getElementById('userMenu');
+      if (authToken && currentUser) {
+        authButtons.classList.add('hidden');
+        userMenu.classList.remove('hidden');
+        userMenu.classList.add('flex');
+        document.getElementById('userGreeting').textContent = `Hi, ${currentUser.name} (${currentUser.role})`;
+      } else {
+        authButtons.classList.remove('hidden');
+        userMenu.classList.add('hidden');
+        userMenu.classList.remove('flex');
       }
-    ];
+    }
 
-    // Rendering Jobs - Ensuring visibility and correct HTML structure
+    function logoutUser() {
+      authToken = null;
+      currentUser = null;
+      localStorage.removeItem('jobnest_token');
+      localStorage.removeItem('jobnest_user');
+      updateAuthUI();
+    }
+
+    function setSignupRole(role) {
+      signupRole = role;
+      document.querySelectorAll('.signupRoleBtn').forEach(btn => {
+        const active = btn.dataset.role === role;
+        btn.classList.toggle('border-brand-600', active);
+        btn.classList.toggle('bg-brand-50', active);
+        btn.classList.toggle('text-brand-700', active);
+        btn.classList.toggle('border-slate-200', !active);
+        btn.classList.toggle('text-slate-600', !active);
+      });
+      document.getElementById('signupCompany').classList.toggle('hidden', role !== 'employer');
+    }
+
+    // ---------------- Signup ----------------
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('signupSubmitBtn');
+      const errorBox = document.getElementById('signupError');
+      errorBox.classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = 'Creating account…';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('signupName').value.trim(),
+            email: document.getElementById('signupEmail').value.trim(),
+            password: document.getElementById('signupPassword').value,
+            role: signupRole,
+            companyName: document.getElementById('signupCompany').value.trim(),
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Signup failed');
+
+        authToken = data.token;
+        currentUser = data.user;
+        localStorage.setItem('jobnest_token', authToken);
+        localStorage.setItem('jobnest_user', JSON.stringify(currentUser));
+        updateAuthUI();
+        closeModal('signupModal');
+        document.getElementById('signupForm').reset();
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+      }
+    });
+
+    // ---------------- Login ----------------
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('loginSubmitBtn');
+      const errorBox = document.getElementById('loginError');
+      errorBox.classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = 'Logging in…';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('loginEmail').value.trim(),
+            password: document.getElementById('loginPassword').value,
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+
+        authToken = data.token;
+        currentUser = data.user;
+        localStorage.setItem('jobnest_token', authToken);
+        localStorage.setItem('jobnest_user', JSON.stringify(currentUser));
+        updateAuthUI();
+        closeModal('loginModal');
+        document.getElementById('loginForm').reset();
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Login';
+      }
+    });
+
+    // ---------------- Post a Job ----------------
+    document.getElementById('postJobForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('postJobSubmitBtn');
+      const errorBox = document.getElementById('postJobError');
+      errorBox.classList.add('hidden');
+
+      if (!authToken || !currentUser) {
+        errorBox.textContent = 'Please login first to post a job.';
+        errorBox.classList.remove('hidden');
+        return;
+      }
+      if (currentUser.role !== 'employer') {
+        errorBox.textContent = 'Only Employer accounts can post jobs. Please sign up as an Employer.';
+        errorBox.classList.remove('hidden');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Publishing…';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/jobs`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+          body: JSON.stringify({
+            title: document.getElementById('jobTitle').value.trim(),
+            companyName: document.getElementById('jobCompanyName').value.trim(),
+            description: document.getElementById('jobDescription').value.trim(),
+            category: document.getElementById('jobCategory').value,
+            type: document.getElementById('jobType').value,
+            locationType: document.getElementById('jobLocationType').value,
+            country: document.getElementById('jobCountry').value.trim(),
+            salaryRange: document.getElementById('jobSalary').value.trim(),
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not publish job');
+
+        closeModal('postJobModal');
+        document.getElementById('postJobForm').reset();
+        loadJobs();
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Publish Job';
+      }
+    });
+
+    // ---------------- Job Listings ----------------
+    async function loadJobs(params = {}) {
+      const container = document.getElementById('jobListingsContainer');
+      container.innerHTML = `<div class="text-sm text-slate-500 py-6 text-center">Loading jobs...</div>`;
+
+      const qs = new URLSearchParams();
+      if (params.q) qs.set('q', params.q);
+      if (params.location) qs.set('location', params.location);
+      if (params.category) qs.set('category', params.category);
+
+      try {
+        const res = await fetch(`${API_BASE}/api/jobs${qs.toString() ? '?' + qs.toString() : ''}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not load jobs');
+        renderJobs(data.jobs || []);
+      } catch (err) {
+        container.innerHTML = `<p class="text-sm text-red-600 py-6 text-center">${escapeHtml(err.message)}</p>`;
+      }
+    }
+
     function renderJobs(jobArray) {
       const container = document.getElementById('jobListingsContainer');
-      container.innerHTML = ''; // Clear loading message
+      container.innerHTML = '';
 
-      if(jobArray.length === 0) {
+      if (jobArray.length === 0) {
         container.innerHTML = `<p class="text-sm text-slate-600 py-6 text-center">No job openings found matching your query.</p>`;
         return;
       }
 
       jobArray.forEach(job => {
         const item = document.createElement('div');
-        item.className = "bg-white p-5 rounded-2xl border border-slate-100/70 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer";
+        item.className = "bg-white p-5 rounded-2xl border border-slate-100/70 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
         item.innerHTML = `
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2.5 shrink-0">
-              <img src="${job.logo}" alt="${job.company}" class="w-full h-full object-contain" onError="this.src='https://cdn-icons-png.flaticon.com/512/2910/2910768.png'">
+              <i data-lucide="building-2" class="w-6 h-6 text-slate-400"></i>
             </div>
             <div>
-              <h4 class="font-extrabold text-slate-950 text-base leading-tight">${job.title}</h4>
-              <p class="text-xs text-slate-600 font-medium mt-0.5">${job.company}</p>
+              <h4 class="font-extrabold text-slate-950 text-base leading-tight">${escapeHtml(job.title || '')}</h4>
+              <p class="text-xs text-slate-600 font-medium mt-0.5">${escapeHtml(job.companyName || '')}</p>
               <div class="flex items-center gap-2 mt-2.5">
-                <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-md">${job.type}</span>
-                <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-[11px] font-bold rounded-md">${job.locationType}</span>
+                <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-md">${escapeHtml(job.type || '')}</span>
+                <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-[11px] font-bold rounded-md">${escapeHtml(job.locationType || '')}</span>
               </div>
             </div>
           </div>
-
           <div class="flex flex-row sm:flex-col items-end justify-between w-full sm:w-auto mt-2 sm:mt-0 text-right">
             <div class="flex items-center gap-1.5 text-xs text-slate-600 font-semibold">
-              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i> ${job.country}
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i> ${escapeHtml(job.country || '')}
             </div>
-            <div class="text-xs font-extrabold text-slate-800 mt-1.5">${job.salary}</div>
+            <div class="text-xs font-extrabold text-slate-800 mt-1.5">${escapeHtml(job.salaryRange || '')}</div>
           </div>
         `;
         container.appendChild(item);
       });
 
-      // Crucial: Refresh icons for dynamically created content
       lucide.createIcons();
     }
 
-    // Modal and Search Functions - Rechecked
+    // ---------------- Search ----------------
     function handleSearch(e) {
       e.preventDefault();
-      const titleQuery = document.getElementById('searchInput').value.toLowerCase();
-      const locQuery = document.getElementById('locationInput').value.toLowerCase();
-      const catQuery = document.getElementById('categoryInput').value;
-
-      const filtered = jobs.filter(job => {
-        const matchesTitle = job.title.toLowerCase().includes(titleQuery) || job.company.toLowerCase().includes(titleQuery);
-        const matchesLoc = job.country.toLowerCase().includes(locQuery) || job.locationType.toLowerCase().includes(locQuery);
-        const matchesCat = catQuery ? job.category === catQuery : true;
-        return matchesTitle && matchesLoc && matchesCat;
+      loadJobs({
+        q: document.getElementById('searchInput').value.trim(),
+        location: document.getElementById('locationInput').value.trim(),
+        category: document.getElementById('categoryInput').value,
       });
-      renderJobs(filtered);
     }
 
-    function quickFilter(term) {
+    function quickFilter(term, location) {
       document.getElementById('searchInput').value = term;
-      handleSearch(new Event('submit'));
+      document.getElementById('locationInput').value = location;
+      loadJobs({ q: term, location });
     }
 
+    function quickFilterCategory(cat) {
+      document.getElementById('categoryInput').value = cat;
+      loadJobs({ category: cat });
+    }
+
+    // ---------------- Modals ----------------
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
   </script>
 </body>
 </html>
