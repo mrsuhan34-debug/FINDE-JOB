@@ -14,6 +14,10 @@ module.exports = async function handler(req, res) {
     if (user.status === 'blocked') return res.status(403).json({ error: 'This account has been blocked. Contact support.' });
     const match = await bcrypt.compare(password, user.passwordHash);
     if (!match) return res.status(401).json({ error: 'Invalid email or password' });
+
+    user.lastLoginAt = new Date();
+    await user.save();
+
     const token = signToken(user);
     return res.status(200).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (err) {
