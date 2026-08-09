@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobNest — Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#f0f5ff', 100: '#e0ebff', 500: '#2563eb', 600: '#1d4ed8', 700: '#1e40af' }
+          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .lucide { display: block !important; }
+  </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 antialiased min-h-screen">
+
+  <!-- ===================== LOGIN VIEW ===================== -->
+  <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white rounded-3xl shadow-xl border border-slate-100 p-8">
+      <div class="flex items-center gap-3 mb-1">
+        <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-md shadow-brand-500/20">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="text-xl font-bold text-slate-950 leading-none">JobNest</div>
+          <div class="text-[11px] text-slate-500 font-medium">Admin Panel</div>
+        </div>
+      </div>
+
+      <h1 class="mt-6 text-lg font-extrabold text-slate-950">Admin Login</h1>
+      <p class="text-xs text-slate-500 mt-1">Only accounts with an admin role can sign in here.</p>
+
+      <form id="loginForm" class="mt-6 space-y-3">
+        <input type="email" id="loginEmail" required placeholder="admin@example.com"
+          class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="password" id="loginPassword" required placeholder="••••••••"
+          class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <button type="submit" id="loginBtn"
+          class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl transition flex items-center justify-center gap-2">
+          <span id="loginBtnText">Login</span>
+        </button>
+      </form>
+
+      <div id="loginError" class="hidden mt-4 text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3"></div>
+    </div>
+  </div>
+
+  <!-- ===================== DASHBOARD VIEW ===================== -->
+  <div id="dashboardView" class="hidden">
+
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-100">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="bg-brand-600 text-white p-2 rounded-lg">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="text-base font-extrabold text-slate-950 leading-none">JobNest Admin</div>
+          </div>
+        </div>
+        <button onclick="logout()" class="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-red-600 transition">
+          <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+          <div class="text-2xl font-extrabold text-slate-950" id="statTotal">–</div>
+          <div class="text-xs font-semibold text-slate-500 mt-1">Total Users</div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+          <div class="text-2xl font-extrabold text-slate-950" id="statSeekers">–</div>
+          <div class="text-xs font-semibold text-slate-500 mt-1">Job Seekers</div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+          <div class="text-2xl font-extrabold text-slate-950" id="statEmployers">–</div>
+          <div class="text-xs font-semibold text-slate-500 mt-1">Employers</div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+          <div class="text-2xl font-extrabold text-red-600" id="statBlocked">–</div>
+          <div class="text-xs font-semibold text-slate-500 mt-1">Blocked</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <h2 class="text-lg font-extrabold text-slate-950">All Signups</h2>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-xl">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+            <input id="searchInput" oninput="renderUsers()" placeholder="Search name or email"
+              class="text-xs outline-none bg-transparent w-48">
+          </div>
+          <button onclick="loadUsers()" class="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition">
+            <i data-lucide="refresh-cw" class="w-4 h-4 text-slate-600"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div id="usersLoading" class="p-10 text-center text-sm text-slate-500">Loading users…</div>
+        <div id="usersEmpty" class="hidden p-10 text-center text-sm text-slate-500">No users found.</div>
+        <div id="usersError" class="hidden p-10 text-center text-sm font-semibold text-red-600"></div>
+
+        <table id="usersTable" class="hidden w-full text-left">
+          <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wide">
+            <tr>
+              <th class="px-5 py-3">Name</th>
+              <th class="px-5 py-3">Email</th>
+              <th class="px-5 py-3">Role</th>
+              <th class="px-5 py-3">Status</th>
+              <th class="px-5 py-3">Joined</th>
+              <th class="px-5 py-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody" class="divide-y divide-slate-100 text-sm"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // API base = same origin the admin.html is hosted on
+    const API_BASE = '';
+
+    let allUsers = [];
+    let authToken = localStorage.getItem('jobnest_admin_token') || null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      if (authToken) {
+        showDashboard();
+        loadUsers();
+      }
+    });
+
+    // ---------- Login ----------
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('loginBtn');
+      const btnText = document.getElementById('loginBtnText');
+      const errorBox = document.getElementById('loginError');
+
+      errorBox.classList.add('hidden');
+      btn.disabled = true;
+      btnText.textContent = 'Logging in…';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+        if (data.user.role !== 'admin') throw new Error('This account is not an admin');
+
+        authToken = data.token;
+        localStorage.setItem('jobnest_admin_token', authToken);
+        showDashboard();
+        loadUsers();
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = 'Login';
+      }
+    });
+
+    function showDashboard() {
+      document.getElementById('loginView').classList.add('hidden');
+      document.getElementById('dashboardView').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function logout() {
+      authToken = null;
+      localStorage.removeItem('jobnest_admin_token');
+      document.getElementById('dashboardView').classList.add('hidden');
+      document.getElementById('loginView').classList.remove('hidden');
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPassword').value = '';
+    }
+
+    // ---------- Load users ----------
+    async function loadUsers() {
+      const loading = document.getElementById('usersLoading');
+      const empty = document.getElementById('usersEmpty');
+      const errorBox = document.getElementById('usersError');
+      const table = document.getElementById('usersTable');
+
+      loading.classList.remove('hidden');
+      empty.classList.add('hidden');
+      errorBox.classList.add('hidden');
+      table.classList.add('hidden');
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/users`, {
+          headers: { Authorization: `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+
+        if (res.status === 401 || res.status === 403) {
+          logout();
+          return;
+        }
+        if (!res.ok) throw new Error(data.error || 'Could not load users');
+
+        allUsers = data.users || [];
+        renderStats();
+        renderUsers();
+      } catch (err) {
+        loading.classList.add('hidden');
+        errorBox.textContent = err.message;
+        errorBox.classList.remove('hidden');
+      }
+    }
+
+    function renderStats() {
+      document.getElementById('statTotal').textContent = allUsers.length;
+      document.getElementById('statSeekers').textContent = allUsers.filter(u => u.role === 'seeker').length;
+      document.getElementById('statEmployers').textContent = allUsers.filter(u => u.role === 'employer').length;
+      document.getElementById('statBlocked').textContent = allUsers.filter(u => u.status === 'blocked').length;
+    }
+
+    function renderUsers() {
+      const loading = document.getElementById('usersLoading');
+      const empty = document.getElementById('usersEmpty');
+      const table = document.getElementById('usersTable');
+      const body = document.getElementById('usersBody');
+      const q = (document.getElementById('searchInput').value || '').toLowerCase();
+
+      const filtered = allUsers.filter(u =>
+        u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q)
+      );
+
+      loading.classList.add('hidden');
+
+      if (filtered.length === 0) {
+        table.classList.add('hidden');
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+      table.classList.remove('hidden');
+      body.innerHTML = '';
+
+      filtered.forEach(u => {
+        const isBlocked = u.status === 'blocked';
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="px-5 py-3.5 font-bold text-slate-900">${escapeHtml(u.name || '—')}</td>
+          <td class="px-5 py-3.5 text-slate-600">${escapeHtml(u.email || '—')}</td>
+          <td class="px-5 py-3.5">
+            <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold ${roleBadgeClass(u.role)}">${u.role}</span>
+          </td>
+          <td class="px-5 py-3.5">
+            <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold ${isBlocked ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}">
+              ${isBlocked ? 'Blocked' : 'Active'}
+            </span>
+          </td>
+          <td class="px-5 py-3.5 text-slate-500 text-xs">${formatDate(u.createdAt)}</td>
+          <td class="px-5 py-3.5 text-right">
+            <button data-id="${u._id}" data-blocked="${isBlocked}"
+              class="toggleBtn px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${isBlocked ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white'}">
+              ${isBlocked ? 'Unblock' : 'Block'}
+            </button>
+          </td>
+        `;
+        body.appendChild(row);
+      });
+
+      document.querySelectorAll('.toggleBtn').forEach(btn => {
+        btn.addEventListener('click', () => toggleBlock(btn.dataset.id, btn.dataset.blocked === 'true'));
+      });
+    }
+
+    async function toggleBlock(userId, currentlyBlocked) {
+      const newStatus = currentlyBlocked ? 'active' : 'blocked';
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Action failed');
+
+        const idx = allUsers.findIndex(u => u._id === userId);
+        if (idx !== -1) allUsers[idx].status = newStatus;
+        renderStats();
+        renderUsers();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function roleBadgeClass(role) {
+      if (role === 'admin') return 'bg-purple-50 text-purple-700';
+      if (role === 'employer') return 'bg-blue-50 text-blue-700';
+      return 'bg-amber-50 text-amber-700';
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
