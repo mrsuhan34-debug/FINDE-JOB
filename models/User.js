@@ -10,5 +10,6 @@ const UserSchema = new mongoose.Schema({
   resumeUrl: String,
   companyName: String,
   companyLogoUrl: String,
+  lastLoginAt: { type: Date },
 }, { timestamps: true });
 module.exports = mongoose.models.User || mongoose.model('User', UserSchema);
