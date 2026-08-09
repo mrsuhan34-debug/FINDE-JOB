@@ -26,8 +26,8 @@
 </head>
 <body class="bg-[#f8fafc] text-slate-800 antialiased min-h-screen">
 
-  <!-- ===================== LOGIN VIEW ===================== -->
-  <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
+  <!-- ===================== PASSCODE VIEW ===================== -->
+  <div id="passcodeView" class="min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-white rounded-3xl shadow-xl border border-slate-100 p-8">
       <div class="flex items-center gap-3 mb-1">
         <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-md shadow-brand-500/20">
@@ -39,21 +39,19 @@
         </div>
       </div>
 
-      <h1 class="mt-6 text-lg font-extrabold text-slate-950">Admin Login</h1>
-      <p class="text-xs text-slate-500 mt-1">Only accounts with an admin role can sign in here.</p>
+      <h1 class="mt-6 text-lg font-extrabold text-slate-950">Enter Passcode</h1>
+      <p class="text-xs text-slate-500 mt-1">Enter the admin passcode to continue.</p>
 
-      <form id="loginForm" class="mt-6 space-y-3">
-        <input type="email" id="loginEmail" required placeholder="admin@example.com"
-          class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
-        <input type="password" id="loginPassword" required placeholder="••••••••"
-          class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
-        <button type="submit" id="loginBtn"
+      <form id="passcodeForm" class="mt-6 space-y-3">
+        <input type="password" id="passcodeInput" required placeholder="••••••••" autocomplete="off"
+          class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500 tracking-widest">
+        <button type="submit" id="unlockBtn"
           class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl transition flex items-center justify-center gap-2">
-          <span id="loginBtnText">Login</span>
+          <span id="unlockBtnText">Unlock</span>
         </button>
       </form>
 
-      <div id="loginError" class="hidden mt-4 text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3"></div>
+      <div id="passcodeError" class="hidden mt-4 text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3"></div>
     </div>
   </div>
 
@@ -66,12 +64,10 @@
           <div class="bg-brand-600 text-white p-2 rounded-lg">
             <i data-lucide="shield-check" class="w-5 h-5"></i>
           </div>
-          <div>
-            <div class="text-base font-extrabold text-slate-950 leading-none">JobNest Admin</div>
-          </div>
+          <div class="text-base font-extrabold text-slate-950 leading-none">JobNest Admin</div>
         </div>
-        <button onclick="logout()" class="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-red-600 transition">
-          <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+        <button onclick="lockPanel()" class="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-red-600 transition">
+          <i data-lucide="lock" class="w-4 h-4"></i> Lock
         </button>
       </div>
     </header>
@@ -126,8 +122,8 @@
               <th class="px-5 py-3">Email</th>
               <th class="px-5 py-3">Role</th>
               <th class="px-5 py-3">Status</th>
-              <th class="px-5 py-3">Joined</th>
-              <th class="px-5 py-3 text-right">Action</th>
+              <th class="px-5 py-3">Last Login</th>
+              <th class="px-5 py-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody id="usersBody" class="divide-y divide-slate-100 text-sm"></tbody>
@@ -137,11 +133,9 @@
   </div>
 
   <script>
-    // API base = same origin the admin.html is hosted on
     const API_BASE = '';
-
     let allUsers = [];
-    let authToken = localStorage.getItem('jobnest_admin_token') || null;
+    let authToken = sessionStorage.getItem('jobnest_admin_token') || null;
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
@@ -151,32 +145,30 @@
       }
     });
 
-    // ---------- Login ----------
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    // ---------- Passcode unlock ----------
+    document.getElementById('passcodeForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      const btn = document.getElementById('loginBtn');
-      const btnText = document.getElementById('loginBtnText');
-      const errorBox = document.getElementById('loginError');
+      const passcode = document.getElementById('passcodeInput').value;
+      const btn = document.getElementById('unlockBtn');
+      const btnText = document.getElementById('unlockBtnText');
+      const errorBox = document.getElementById('passcodeError');
 
       errorBox.classList.add('hidden');
       btn.disabled = true;
-      btnText.textContent = 'Logging in…';
+      btnText.textContent = 'Checking…';
 
       try {
-        const res = await fetch(`${API_BASE}/api/auth/login`, {
+        const res = await fetch(`${API_BASE}/api/admin/auth`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ passcode })
         });
         const data = await res.json();
-
-        if (!res.ok) throw new Error(data.error || 'Login failed');
-        if (data.user.role !== 'admin') throw new Error('This account is not an admin');
+        if (!res.ok) throw new Error(data.error || 'Incorrect passcode');
 
         authToken = data.token;
-        localStorage.setItem('jobnest_admin_token', authToken);
+        sessionStorage.setItem('jobnest_admin_token', authToken);
+        document.getElementById('passcodeInput').value = '';
         showDashboard();
         loadUsers();
       } catch (err) {
@@ -184,23 +176,21 @@
         errorBox.classList.remove('hidden');
       } finally {
         btn.disabled = false;
-        btnText.textContent = 'Login';
+        btnText.textContent = 'Unlock';
       }
     });
 
     function showDashboard() {
-      document.getElementById('loginView').classList.add('hidden');
+      document.getElementById('passcodeView').classList.add('hidden');
       document.getElementById('dashboardView').classList.remove('hidden');
       lucide.createIcons();
     }
 
-    function logout() {
+    function lockPanel() {
       authToken = null;
-      localStorage.removeItem('jobnest_admin_token');
+      sessionStorage.removeItem('jobnest_admin_token');
       document.getElementById('dashboardView').classList.add('hidden');
-      document.getElementById('loginView').classList.remove('hidden');
-      document.getElementById('loginEmail').value = '';
-      document.getElementById('loginPassword').value = '';
+      document.getElementById('passcodeView').classList.remove('hidden');
     }
 
     // ---------- Load users ----------
@@ -222,7 +212,7 @@
         const data = await res.json();
 
         if (res.status === 401 || res.status === 403) {
-          logout();
+          lockPanel();
           return;
         }
         if (!res.ok) throw new Error(data.error || 'Could not load users');
@@ -281,11 +271,15 @@
               ${isBlocked ? 'Blocked' : 'Active'}
             </span>
           </td>
-          <td class="px-5 py-3.5 text-slate-500 text-xs">${formatDate(u.createdAt)}</td>
-          <td class="px-5 py-3.5 text-right">
+          <td class="px-5 py-3.5 text-slate-500 text-xs">${formatDate(u.lastLoginAt)}</td>
+          <td class="px-5 py-3.5 text-right whitespace-nowrap">
             <button data-id="${u._id}" data-blocked="${isBlocked}"
-              class="toggleBtn px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${isBlocked ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white'}">
+              class="toggleBtn px-3 py-1.5 rounded-lg text-xs font-bold transition mr-2 ${isBlocked ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-slate-700 hover:bg-slate-800 text-white'}">
               ${isBlocked ? 'Unblock' : 'Block'}
+            </button>
+            <button data-id="${u._id}" data-name="${escapeHtml(u.name || 'this user')}"
+              class="kickBtn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-red-600 hover:bg-red-700 text-white">
+              Kick
             </button>
           </td>
         `;
@@ -295,6 +289,9 @@
       document.querySelectorAll('.toggleBtn').forEach(btn => {
         btn.addEventListener('click', () => toggleBlock(btn.dataset.id, btn.dataset.blocked === 'true'));
       });
+      document.querySelectorAll('.kickBtn').forEach(btn => {
+        btn.addEventListener('click', () => kickUser(btn.dataset.id, btn.dataset.name));
+      });
     }
 
     async function toggleBlock(userId, currentlyBlocked) {
@@ -302,10 +299,7 @@
       try {
         const res = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authToken}`
-          },
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
           body: JSON.stringify({ status: newStatus })
         });
         const data = await res.json();
@@ -320,6 +314,27 @@
       }
     }
 
+    async function kickUser(userId, name) {
+      // Kick permanently deletes the account — confirm before sending the request.
+      const confirmed = confirm(`Permanently delete "${name}"? This cannot be undone.`);
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not delete user');
+
+        allUsers = allUsers.filter(u => u._id !== userId);
+        renderStats();
+        renderUsers();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
     function roleBadgeClass(role) {
       if (role === 'admin') return 'bg-purple-50 text-purple-700';
       if (role === 'employer') return 'bg-blue-50 text-blue-700';
@@ -327,7 +342,7 @@
     }
 
     function formatDate(iso) {
-      if (!iso) return '—';
+      if (!iso) return 'Never';
       const d = new Date(iso);
       return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     }
