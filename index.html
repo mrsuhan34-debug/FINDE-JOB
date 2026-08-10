@@ -353,9 +353,25 @@
     function getCompanyLogo(name) {
       if (!name) return null;
       const key = name.toLowerCase();
-      const match = Object.keys(KNOWN_COMPANY_LOGOS).find((k) => key.includes(k));
-      return match ? KNOWN_COMPANY_LOGOS[match] : null;
+      const known = Object.keys(KNOWN_COMPANY_LOGOS).find((k) => key.includes(k));
+      if (known) return KNOWN_COMPANY_LOGOS[known];
+
+      // For everything else, guess a domain from the company name (strips
+      // common suffixes like Pvt Ltd / Inc / Technologies) and try Clearbit's
+      // logo API. Not always accurate, but works for a large share of real
+      // companies, and falls back cleanly to a generic icon if it 404s.
+      let clean = key
+        .replace(/\b(pvt\.?|private|limited|ltd\.?|llc|inc\.?|corp\.?|corporation|co\.?|company|group|technologies|technology|solutions|systems)\b/g, '')
+        .replace(/[^a-z0-9.]/g, '')
+        .trim();
+      if (!clean) return null;
+      const domain = /\.[a-z]{2,}$/.test(clean) ? clean : `${clean}.com`;
+      return `https://logo.clearbit.com/${domain}`;
     }
+
+    // Inline SVG fallback (a plain building glyph) shown when a logo image
+    // fails to load — no extra network request, never breaks.
+    const FALLBACK_LOGO_SVG = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path><line x1="3" y1="13" x2="21" y2="13"></line></svg>')}`;
 
     function priorityRank(name) {
       if (!name) return 999;
@@ -644,7 +660,7 @@
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2 shrink-0 overflow-hidden">
               ${logoUrl
-                ? `<img src="${logoUrl}" alt="${escapeHtml(job.companyName || '')}" class="w-full h-full object-contain" onerror="this.style.display='none'">`
+                ? `<img src="${logoUrl}" alt="${escapeHtml(job.companyName || '')}" class="w-full h-full object-contain" onerror="this.onerror=null;this.src='${FALLBACK_LOGO_SVG}'">`
                 : `<i data-lucide="building-2" class="w-6 h-6 text-slate-400"></i>`}
             </div>
             <div>
