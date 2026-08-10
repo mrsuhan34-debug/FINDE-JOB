@@ -200,7 +200,7 @@
       <div class="lg:col-span-8 space-y-5">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-extrabold text-slate-950">Latest Job Openings</h2>
-          <a href="#" onclick="loadJobs(); return false;" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+          <a href="#" onclick="viewAllJobs(); return false;" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
             View All <i data-lucide="chevron-right" class="w-4 h-4"></i>
           </a>
         </div>
@@ -329,6 +329,40 @@
     let authToken = localStorage.getItem('jobnest_token') || null;
     let currentUser = JSON.parse(localStorage.getItem('jobnest_user') || 'null');
     let signupRole = 'seeker';
+    let currentLimit = 12; // grows each time "View All" is clicked
+
+    // Recognizable big-brand logos (via Clearbit's public logo API) so jobs
+    // from these companies show a real logo instead of a generic icon, and
+    // are shown near the top of the list.
+    const KNOWN_COMPANY_LOGOS = {
+      google: 'https://logo.clearbit.com/google.com',
+      microsoft: 'https://logo.clearbit.com/microsoft.com',
+      amazon: 'https://logo.clearbit.com/amazon.com',
+      apple: 'https://logo.clearbit.com/apple.com',
+      meta: 'https://logo.clearbit.com/meta.com',
+      facebook: 'https://logo.clearbit.com/facebook.com',
+      netflix: 'https://logo.clearbit.com/netflix.com',
+      ibm: 'https://logo.clearbit.com/ibm.com',
+      adobe: 'https://logo.clearbit.com/adobe.com',
+      oracle: 'https://logo.clearbit.com/oracle.com',
+      salesforce: 'https://logo.clearbit.com/salesforce.com',
+      samsung: 'https://logo.clearbit.com/samsung.com',
+    };
+    const PRIORITY_ORDER = ['google', 'microsoft', 'amazon'];
+
+    function getCompanyLogo(name) {
+      if (!name) return null;
+      const key = name.toLowerCase();
+      const match = Object.keys(KNOWN_COMPANY_LOGOS).find((k) => key.includes(k));
+      return match ? KNOWN_COMPANY_LOGOS[match] : null;
+    }
+
+    function priorityRank(name) {
+      if (!name) return 999;
+      const key = name.toLowerCase();
+      const idx = PRIORITY_ORDER.findIndex((k) => key.includes(k));
+      return idx === -1 ? 999 : idx;
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
@@ -506,13 +540,15 @@
       const container = document.getElementById('jobListingsContainer');
       container.innerHTML = `<div class="text-sm text-slate-500 py-6 text-center">Loading jobs...</div>`;
 
+      const limit = params.limit || currentLimit;
       const qs = new URLSearchParams();
       if (params.q) qs.set('q', params.q);
       if (params.location) qs.set('location', params.location);
       if (params.category) qs.set('category', params.category);
+      qs.set('limit', limit);
 
       const isUnfiltered = !params.q && !params.location && !params.category;
-      const qsStr = qs.toString() ? '?' + qs.toString() : '';
+      const qsStr = '?' + qs.toString();
 
       try {
         // Fetch our own posted jobs and live external (Adzuna) jobs in parallel.
@@ -533,11 +569,26 @@
         }
 
         const combined = [...(internalData.jobs || []), ...externalJobs];
+        // Keep Google/Microsoft/Amazon near the top when present (stable sort
+        // preserves relative order for everything else).
+        combined.sort((a, b) => priorityRank(a.companyName) - priorityRank(b.companyName));
+
         renderJobs(combined);
         if (isUnfiltered) populateLocationOptions(internalData.jobs || []);
       } catch (err) {
         container.innerHTML = `<p class="text-sm text-red-600 py-6 text-center">${escapeHtml(err.message)}</p>`;
       }
+    }
+
+    // "View All" — shows more results without losing whatever filter is active.
+    function viewAllJobs() {
+      currentLimit = Math.min(currentLimit + 20, 60);
+      loadJobs({
+        q: document.getElementById('searchInput').value.trim(),
+        location: document.getElementById('locationInput').value,
+        category: document.getElementById('categoryInput').value,
+        limit: currentLimit,
+      });
     }
 
     function populateLocationOptions(jobs) {
@@ -583,6 +634,7 @@
 
       jobArray.forEach(job => {
         const isExternal = job.source === 'external';
+        const logoUrl = getCompanyLogo(job.companyName);
         const item = document.createElement('div');
         item.className = "bg-white p-5 rounded-2xl border border-slate-100/70 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" + (isExternal ? ' cursor-pointer' : '');
         if (isExternal && job.applyUrl) {
@@ -590,8 +642,10 @@
         }
         item.innerHTML = `
           <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2.5 shrink-0">
-              <i data-lucide="building-2" class="w-6 h-6 text-slate-400"></i>
+            <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2 shrink-0 overflow-hidden">
+              ${logoUrl
+                ? `<img src="${logoUrl}" alt="${escapeHtml(job.companyName || '')}" class="w-full h-full object-contain" onerror="this.style.display='none'">`
+                : `<i data-lucide="building-2" class="w-6 h-6 text-slate-400"></i>`}
             </div>
             <div>
               <h4 class="font-extrabold text-slate-950 text-base leading-tight">${escapeHtml(job.title || '')}</h4>
