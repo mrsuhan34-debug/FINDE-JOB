@@ -65,7 +65,7 @@
           </div>
         </div>
         <a href="#" class="hover:text-brand-600 transition">Pricing</a>
-        <a href="#" class="hover:text-brand-600 transition">About Us</a>
+        <a href="about.html" class="hover:text-brand-600 transition">About Us</a>
       </nav>
 
       <!-- Auth Buttons: swapped between logged-out / logged-in state by JS -->
@@ -110,10 +110,12 @@
             </div>
             <div class="flex items-center gap-2.5 px-3 py-2.5 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100/70">
               <i data-lucide="map-pin" class="w-5 h-5 text-slate-400 shrink-0"></i>
-              <input type="text" id="locationInput" placeholder="Location" class="w-full text-sm outline-none text-slate-900 placeholder-slate-400 bg-transparent font-medium">
+              <select id="locationInput" onchange="handleFilterChange()" class="w-full text-sm outline-none text-slate-700 font-medium bg-transparent cursor-pointer">
+                <option value="">All Locations</option>
+              </select>
             </div>
             <div class="flex items-center px-3 py-2.5 flex-1 w-full">
-              <select id="categoryInput" class="w-full text-sm outline-none text-slate-700 font-semibold bg-transparent cursor-pointer">
+              <select id="categoryInput" onchange="handleFilterChange()" class="w-full text-sm outline-none text-slate-700 font-semibold bg-transparent cursor-pointer">
                 <option value="">All Categories</option>
                 <option value="Design">Design</option>
                 <option value="Engineering">Engineering</option>
@@ -509,14 +511,43 @@
       if (params.location) qs.set('location', params.location);
       if (params.category) qs.set('category', params.category);
 
+      const isUnfiltered = !params.q && !params.location && !params.category;
+
       try {
         const res = await fetch(`${API_BASE}/api/jobs${qs.toString() ? '?' + qs.toString() : ''}`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Could not load jobs');
         renderJobs(data.jobs || []);
+        // Build the location dropdown from real job data — only refresh it from an
+        // unfiltered load, so filtering doesn't shrink the list of available options.
+        if (isUnfiltered) populateLocationOptions(data.jobs || []);
       } catch (err) {
         container.innerHTML = `<p class="text-sm text-red-600 py-6 text-center">${escapeHtml(err.message)}</p>`;
       }
+    }
+
+    function populateLocationOptions(jobs) {
+      const select = document.getElementById('locationInput');
+      const current = select.value;
+      const values = new Set();
+      jobs.forEach(job => {
+        if (job.country) values.add(job.country);
+        if (job.locationType) values.add(job.locationType);
+      });
+      const sorted = [...values].sort();
+      select.innerHTML = '<option value="">All Locations</option>' +
+        sorted.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+      if (sorted.includes(current)) select.value = current;
+    }
+
+    // Real-time filtering — fires as soon as Location or Category is changed,
+    // no need to press "Find Jobs".
+    function handleFilterChange() {
+      loadJobs({
+        q: document.getElementById('searchInput').value.trim(),
+        location: document.getElementById('locationInput').value,
+        category: document.getElementById('categoryInput').value,
+      });
     }
 
     function renderJobs(jobArray) {
