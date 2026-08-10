@@ -106,7 +106,7 @@
           <form id="searchForm" onsubmit="handleSearch(event)" class="flex flex-col md:flex-row items-center gap-2">
             <div class="flex items-center gap-2.5 px-3 py-2.5 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100/70">
               <i data-lucide="search" class="w-5 h-5 text-slate-400 shrink-0"></i>
-              <input type="text" id="searchInput" placeholder="Job title, skills or keywords" class="w-full text-sm outline-none text-slate-900 placeholder-slate-400 bg-transparent font-medium">
+              <input type="text" id="searchInput" oninput="debouncedFilterChange()" placeholder="Job title, skills or keywords" class="w-full text-sm outline-none text-slate-900 placeholder-slate-400 bg-transparent font-medium">
             </div>
             <div class="flex items-center gap-2.5 px-3 py-2.5 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100/70">
               <i data-lucide="map-pin" class="w-5 h-5 text-slate-400 shrink-0"></i>
@@ -512,15 +512,29 @@
       if (params.category) qs.set('category', params.category);
 
       const isUnfiltered = !params.q && !params.location && !params.category;
+      const qsStr = qs.toString() ? '?' + qs.toString() : '';
 
       try {
-        const res = await fetch(`${API_BASE}/api/jobs${qs.toString() ? '?' + qs.toString() : ''}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Could not load jobs');
-        renderJobs(data.jobs || []);
-        // Build the location dropdown from real job data — only refresh it from an
-        // unfiltered load, so filtering doesn't shrink the list of available options.
-        if (isUnfiltered) populateLocationOptions(data.jobs || []);
+        // Fetch our own posted jobs and live external (Adzuna) jobs in parallel.
+        // The external call is wrapped so that if it fails or isn't configured
+        // yet, the page still works with just our own jobs.
+        const [internalRes, externalRes] = await Promise.all([
+          fetch(`${API_BASE}/api/jobs${qsStr}`),
+          fetch(`${API_BASE}/api/jobs/external${qsStr}`).catch(() => null),
+        ]);
+
+        const internalData = await internalRes.json();
+        if (!internalRes.ok) throw new Error(internalData.error || 'Could not load jobs');
+
+        let externalJobs = [];
+        if (externalRes && externalRes.ok) {
+          const externalData = await externalRes.json();
+          externalJobs = externalData.jobs || [];
+        }
+
+        const combined = [...(internalData.jobs || []), ...externalJobs];
+        renderJobs(combined);
+        if (isUnfiltered) populateLocationOptions(internalData.jobs || []);
       } catch (err) {
         container.innerHTML = `<p class="text-sm text-red-600 py-6 text-center">${escapeHtml(err.message)}</p>`;
       }
@@ -550,6 +564,14 @@
       });
     }
 
+    // Same as handleFilterChange, but debounced for the text input so it
+    // doesn't fire an API call on every single keystroke.
+    let searchDebounceTimer = null;
+    function debouncedFilterChange() {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(handleFilterChange, 400);
+    }
+
     function renderJobs(jobArray) {
       const container = document.getElementById('jobListingsContainer');
       container.innerHTML = '';
@@ -560,8 +582,12 @@
       }
 
       jobArray.forEach(job => {
+        const isExternal = job.source === 'external';
         const item = document.createElement('div');
-        item.className = "bg-white p-5 rounded-2xl border border-slate-100/70 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
+        item.className = "bg-white p-5 rounded-2xl border border-slate-100/70 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" + (isExternal ? ' cursor-pointer' : '');
+        if (isExternal && job.applyUrl) {
+          item.addEventListener('click', () => window.open(job.applyUrl, '_blank'));
+        }
         item.innerHTML = `
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2.5 shrink-0">
@@ -573,6 +599,7 @@
               <div class="flex items-center gap-2 mt-2.5">
                 <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-md">${escapeHtml(job.type || '')}</span>
                 <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-[11px] font-bold rounded-md">${escapeHtml(job.locationType || '')}</span>
+                ${isExternal ? '<span class="px-2.5 py-0.5 bg-purple-50 text-purple-700 text-[11px] font-bold rounded-md">Live</span>' : ''}
               </div>
             </div>
           </div>
