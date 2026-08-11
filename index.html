@@ -84,8 +84,20 @@
             <i data-lucide="log-out" class="w-4 h-4"></i> Logout
           </button>
         </div>
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+          <i data-lucide="menu" class="w-5 h-5 text-slate-700"></i>
+        </button>
       </div>
 
+    </div>
+
+    <!-- Mobile nav panel — hidden by default, toggled on small screens -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-slate-100 bg-white px-4 py-4 space-y-1">
+      <a href="#" onclick="closeMobileMenu()" class="block px-3 py-2.5 rounded-lg font-bold text-sm text-brand-600 bg-brand-50">Home</a>
+      <a href="#jobListingsContainer" onclick="closeMobileMenu()" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">Find Jobs</a>
+      <a href="#" onclick="openModal('postJobModal'); closeMobileMenu(); return false;" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">Employers — Post a Job</a>
+      <a href="#" onclick="closeMobileMenu()" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">Pricing</a>
+      <a href="about.html" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">About Us</a>
     </div>
   </header>
 
@@ -144,7 +156,7 @@
         <div class="absolute w-[280px] h-[280px] bg-indigo-200/40 rounded-full blur-2xl bottom-0 left-0 pointer-events-none"></div>
         <div class="relative w-full max-w-md">
           <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80">
-            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" alt="Professional Woman Working on Laptop" class="w-full h-[400px] object-cover object-top">
+            <img src="hero.jpg" alt="Professional Woman Working on Laptop" class="w-full h-[400px] object-cover object-top">
           </div>
           <div class="absolute -top-4 -right-4 z-20 bg-white border border-slate-100 shadow-xl rounded-2xl p-4 flex items-center gap-3">
             <div class="p-2.5 bg-purple-100 text-purple-700 rounded-xl"><i data-lucide="briefcase" class="w-5 h-5"></i></div>
@@ -350,28 +362,27 @@
     };
     const PRIORITY_ORDER = ['google', 'microsoft', 'amazon'];
 
-    function getCompanyLogo(name) {
+    function getKnownCompanyLogo(name) {
       if (!name) return null;
       const key = name.toLowerCase();
       const known = Object.keys(KNOWN_COMPANY_LOGOS).find((k) => key.includes(k));
-      if (known) return KNOWN_COMPANY_LOGOS[known];
-
-      // For everything else, guess a domain from the company name (strips
-      // common suffixes like Pvt Ltd / Inc / Technologies) and try Clearbit's
-      // logo API. Not always accurate, but works for a large share of real
-      // companies, and falls back cleanly to a generic icon if it 404s.
-      let clean = key
-        .replace(/\b(pvt\.?|private|limited|ltd\.?|llc|inc\.?|corp\.?|corporation|co\.?|company|group|technologies|technology|solutions|systems)\b/g, '')
-        .replace(/[^a-z0-9.]/g, '')
-        .trim();
-      if (!clean) return null;
-      const domain = /\.[a-z]{2,}$/.test(clean) ? clean : `${clean}.com`;
-      return `https://logo.clearbit.com/${domain}`;
+      return known ? KNOWN_COMPANY_LOGOS[known] : null;
     }
 
-    // Inline SVG fallback (a plain building glyph) shown when a logo image
-    // fails to load — no extra network request, never breaks.
-    const FALLBACK_LOGO_SVG = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path><line x1="3" y1="13" x2="21" y2="13"></line></svg>')}`;
+    // For companies outside the curated big-brand list, external logo APIs
+    // (Clearbit etc.) are unreliable — many small companies aren't listed,
+    // and logo requests can get silently blocked by ad-blockers. A local
+    // "initials" avatar always renders instantly with zero network calls.
+    const AVATAR_COLORS = ['#2563eb', '#7c3aed', '#059669', '#d97706', '#dc2626', '#0891b2', '#db2777', '#4f46e5'];
+    function getInitialsAvatar(name) {
+      const clean = (name || '').trim();
+      if (!clean) return { initials: '?', color: '#94a3b8' };
+      const words = clean.split(/\s+/).filter(Boolean);
+      const initials = ((words[0]?.[0] || '') + (words[1]?.[0] || '')).toUpperCase() || clean[0].toUpperCase();
+      let hash = 0;
+      for (let i = 0; i < clean.length; i++) hash = clean.charCodeAt(i) + ((hash << 5) - hash);
+      return { initials, color: AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length] };
+    }
 
     function priorityRank(name) {
       if (!name) return 999;
@@ -650,7 +661,8 @@
 
       jobArray.forEach(job => {
         const isExternal = job.source === 'external';
-        const logoUrl = getCompanyLogo(job.companyName);
+        const logoUrl = getKnownCompanyLogo(job.companyName);
+        const avatar = getInitialsAvatar(job.companyName);
         const item = document.createElement('div');
         item.className = "bg-white p-5 rounded-2xl border border-slate-100/70 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" + (isExternal ? ' cursor-pointer' : '');
         if (isExternal && job.applyUrl) {
@@ -660,8 +672,8 @@
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2 shrink-0 overflow-hidden">
               ${logoUrl
-                ? `<img src="${logoUrl}" alt="${escapeHtml(job.companyName || '')}" class="w-full h-full object-contain" onerror="this.onerror=null;this.src='${FALLBACK_LOGO_SVG}'">`
-                : `<i data-lucide="building-2" class="w-6 h-6 text-slate-400"></i>`}
+                ? `<img src="${logoUrl}" alt="${escapeHtml(job.companyName || '')}" class="w-full h-full object-contain" onerror="this.outerHTML='<div class=&quot;w-full h-full rounded-lg flex items-center justify-center text-white text-sm font-extrabold&quot; style=&quot;background:${avatar.color}&quot;>${avatar.initials}</div>'">`
+                : `<div class="w-full h-full rounded-lg flex items-center justify-center text-white text-sm font-extrabold" style="background:${avatar.color}">${avatar.initials}</div>`}
             </div>
             <div>
               <h4 class="font-extrabold text-slate-950 text-base leading-tight">${escapeHtml(job.title || '')}</h4>
@@ -710,6 +722,10 @@
     // ---------------- Modals ----------------
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // ---------------- Mobile nav ----------------
+    function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
+    function closeMobileMenu() { document.getElementById('mobileMenu').classList.add('hidden'); }
 
     function escapeHtml(str) {
       const div = document.createElement('div');
