@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Jobs - JobNest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#f0f5ff', 100: '#e0ebff', 500: '#2563eb', 600: '#1d4ed8', 700: '#1e40af' }
+          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    .lucide { display: block !important; }
+  </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 antialiased">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-100/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="bg-brand-600 text-white p-2.5 rounded-xl shadow-md shadow-brand-500/20">
+          <i data-lucide="briefcase" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <span class="text-2xl font-bold tracking-tight text-slate-950 block leading-none">JobNest</span>
+          <span class="text-[11px] text-slate-600 font-medium tracking-tight">Connecting Talent. Building Futures.</span>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-700">
+        <a href="index.html" class="hover:text-brand-600 transition">Home</a>
+        <a href="jobs.html" class="text-brand-600 font-bold border-b-2 border-brand-600 pb-1">Find Jobs</a>
+        <a href="#" onclick="openModal('postJobModal'); return false;" class="hover:text-brand-600 transition">Employers</a>
+        <a href="#" class="hover:text-brand-600 transition">Pricing</a>
+        <a href="about.html" class="hover:text-brand-600 transition">About Us</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <div id="authButtons" class="flex items-center gap-3">
+          <button onclick="openModal('loginModal')" class="px-5 py-2.5 text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-xl transition">Login</button>
+          <button onclick="openModal('signupModal')" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 transition">Sign Up</button>
+        </div>
+        <div id="userMenu" class="hidden items-center gap-3">
+          <span id="userGreeting" class="text-sm font-bold text-slate-700 hidden sm:inline"></span>
+          <button onclick="logoutUser()" class="px-4 py-2.5 text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition flex items-center gap-1.5">
+            <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+          </button>
+        </div>
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+          <i data-lucide="menu" class="w-5 h-5 text-slate-700"></i>
+        </button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden border-t border-slate-100 bg-white px-4 py-4 space-y-1">
+      <a href="index.html" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">Home</a>
+      <a href="#" class="block px-3 py-2.5 rounded-lg font-bold text-sm text-brand-600 bg-brand-50">Find Jobs</a>
+      <a href="#" onclick="openModal('postJobModal'); closeMobileMenu(); return false;" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">Employers — Post a Job</a>
+      <a href="#" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">Pricing</a>
+      <a href="about.html" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">About Us</a>
+    </div>
+  </header>
+
+  <!-- Search bar -->
+  <section class="bg-gradient-to-br from-blue-50/60 via-indigo-50/30 to-white py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-950 mb-5">Browse Jobs</h1>
+      <div class="p-2 bg-white rounded-2xl shadow-xl border border-slate-100">
+        <form id="searchForm" onsubmit="handleSearch(event)" class="flex flex-col md:flex-row items-center gap-2">
+          <div class="flex items-center gap-2.5 px-3 py-2.5 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100/70">
+            <i data-lucide="search" class="w-5 h-5 text-slate-400 shrink-0"></i>
+            <input type="text" id="searchInput" oninput="debouncedFilterChange()" placeholder="Job title, skills or keywords" class="w-full text-sm outline-none text-slate-900 placeholder-slate-400 bg-transparent font-medium">
+          </div>
+          <div class="flex items-center gap-2.5 px-3 py-2.5 flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100/70">
+            <i data-lucide="map-pin" class="w-5 h-5 text-slate-400 shrink-0"></i>
+            <select id="locationInput" onchange="handleFilterChange()" class="w-full text-sm outline-none text-slate-700 font-medium bg-transparent cursor-pointer">
+              <option value="">All Locations</option>
+            </select>
+          </div>
+          <div class="flex items-center px-3 py-2.5 flex-1 w-full">
+            <select id="categoryInput" onchange="handleFilterChange()" class="w-full text-sm outline-none text-slate-700 font-semibold bg-transparent cursor-pointer">
+              <option value="">All Categories</option>
+              <option value="Design">Design</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Analytics">Analytics</option>
+              <option value="Marketing">Marketing</option>
+            </select>
+          </div>
+          <button type="submit" class="w-full md:w-auto px-7 py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-brand-500/30 shrink-0">
+            Search
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex items-center justify-between mb-4">
+      <h2 id="resultsHeading" class="text-lg font-extrabold text-slate-950">All Jobs</h2>
+    </div>
+    <div id="jobListingsContainer" class="space-y-4 relative min-h-[100px]">
+      <div class="text-sm text-slate-500 py-6 text-center">Loading jobs...</div>
+    </div>
+    <div class="text-center mt-6">
+      <button id="loadMoreBtn" onclick="loadMore()" class="hidden px-6 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 transition">
+        Load More Jobs
+      </button>
+    </div>
+  </section>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl relative">
+      <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <h3 class="text-xl font-extrabold text-slate-950">Welcome Back</h3>
+      <form id="loginForm" class="mt-6 space-y-4">
+        <input type="email" id="loginEmail" required placeholder="you@example.com" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <div id="loginError" class="hidden text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3"></div>
+        <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 bg-brand-600 text-white font-bold text-sm rounded-xl hover:bg-brand-700 transition">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div id="signupModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl relative">
+      <button onclick="closeModal('signupModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <h3 class="text-xl font-extrabold text-slate-950">Create Account</h3>
+      <form id="signupForm" class="mt-6 space-y-4">
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" data-role="seeker" onclick="setSignupRole('seeker')" class="signupRoleBtn px-3 py-2.5 rounded-xl text-xs font-bold border-2 border-brand-600 bg-brand-50 text-brand-700">Job Seeker</button>
+          <button type="button" data-role="employer" onclick="setSignupRole('employer')" class="signupRoleBtn px-3 py-2.5 rounded-xl text-xs font-bold border-2 border-slate-200 text-slate-600">Employer</button>
+        </div>
+        <input type="text" id="signupName" required placeholder="John Doe" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="email" id="signupEmail" required placeholder="you@example.com" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="password" id="signupPassword" required placeholder="•••••••• (min 6 characters)" minlength="6" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="text" id="signupCompany" placeholder="Company Name" class="hidden w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <div id="signupError" class="hidden text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3"></div>
+        <button type="submit" id="signupSubmitBtn" class="w-full py-3.5 bg-brand-600 text-white font-bold text-sm rounded-xl hover:bg-brand-700 transition">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Post Job Modal -->
+  <div id="postJobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white w-full max-w-md rounded-3xl p-7 shadow-2xl relative my-8">
+      <button onclick="closeModal('postJobModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <h3 class="text-xl font-extrabold text-slate-950">Post a Job</h3>
+      <p class="text-xs text-slate-500 mt-1">You need to be logged in as an Employer to post a job.</p>
+      <form id="postJobForm" class="mt-6 space-y-3">
+        <input type="text" id="jobTitle" required placeholder="Job Title (e.g. Frontend Developer)" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <input type="text" id="jobCompanyName" placeholder="Company Name" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <textarea id="jobDescription" required rows="3" placeholder="Job description" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500"></textarea>
+        <div class="grid grid-cols-2 gap-2">
+          <select id="jobCategory" class="text-sm px-3 py-3 border border-slate-200 rounded-xl outline-none">
+            <option value="">Category</option>
+            <option value="Design">Design</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Analytics">Analytics</option>
+            <option value="Marketing">Marketing</option>
+          </select>
+          <select id="jobType" class="text-sm px-3 py-3 border border-slate-200 rounded-xl outline-none">
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <select id="jobLocationType" class="text-sm px-3 py-3 border border-slate-200 rounded-xl outline-none">
+            <option value="Remote">Remote</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="On-site">On-site</option>
+          </select>
+          <input type="text" id="jobCountry" placeholder="Country" class="text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        </div>
+        <input type="text" id="jobSalary" placeholder="$100K - $120K / yr" class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl outline-none focus:border-brand-500">
+        <div id="postJobError" class="hidden text-xs font-semibold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3"></div>
+        <button type="submit" id="postJobSubmitBtn" class="w-full py-3.5 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 transition">Publish Job</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '';
+    let authToken = localStorage.getItem('jobnest_token') || null;
+    let currentUser = JSON.parse(localStorage.getItem('jobnest_user') || 'null');
+    let signupRole = 'seeker';
+    let currentLimit = 15;
+
+    const KNOWN_COMPANY_LOGOS = {
+      google: 'https://logo.clearbit.com/google.com',
+      microsoft: 'https://logo.clearbit.com/microsoft.com',
+      amazon: 'https://logo.clearbit.com/amazon.com',
+      apple: 'https://logo.clearbit.com/apple.com',
+      meta: 'https://logo.clearbit.com/meta.com',
+      facebook: 'https://logo.clearbit.com/facebook.com',
+      netflix: 'https://logo.clearbit.com/netflix.com',
+      ibm: 'https://logo.clearbit.com/ibm.com',
+      adobe: 'https://logo.clearbit.com/adobe.com',
+      oracle: 'https://logo.clearbit.com/oracle.com',
+      salesforce: 'https://logo.clearbit.com/salesforce.com',
+      samsung: 'https://logo.clearbit.com/samsung.com',
+    };
+    const PRIORITY_ORDER = ['google', 'microsoft', 'amazon'];
+
+    function getKnownCompanyLogo(name) {
+      if (!name) return null;
+      const key = name.toLowerCase();
+      const known = Object.keys(KNOWN_COMPANY_LOGOS).find((k) => key.includes(k));
+      return known ? KNOWN_COMPANY_LOGOS[known] : null;
+    }
+    function priorityRank(name) {
+      if (!name) return 999;
+      const key = name.toLowerCase();
+      const idx = PRIORITY_ORDER.findIndex((k) => key.includes(k));
+      return idx === -1 ? 999 : idx;
+    }
+
+    const AVATAR_PALETTE = [
+      { bg: 'bg-blue-50', text: 'text-blue-600' },
+      { bg: 'bg-purple-50', text: 'text-purple-600' },
+      { bg: 'bg-emerald-50', text: 'text-emerald-600' },
+      { bg: 'bg-amber-50', text: 'text-amber-600' },
+      { bg: 'bg-indigo-50', text: 'text-indigo-600' },
+      { bg: 'bg-rose-50', text: 'text-rose-600' },
+      { bg: 'bg-cyan-50', text: 'text-cyan-600' },
+      { bg: 'bg-teal-50', text: 'text-teal-600' },
+    ];
+    function getInitialsAvatar(name) {
+      const clean = (name || '').trim();
+      if (!clean) return { initials: '?', bg: 'bg-slate-100', text: 'text-slate-500' };
+      const words = clean.split(/\s+/).filter(Boolean);
+      const initials = ((words[0]?.[0] || '') + (words[1]?.[0] || '')).toUpperCase() || clean[0].toUpperCase();
+      let hash = 0;
+      for (let i = 0; i < clean.length; i++) hash = clean.charCodeAt(i) + ((hash << 5) - hash);
+      const { bg, text } = AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length];
+      return { initials, bg, text };
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      updateAuthUI();
+
+      // Pick up filters passed from the homepage's "View All" link
+      const urlParams = new URLSearchParams(window.location.search);
+      const q = urlParams.get('q') || '';
+      const location = urlParams.get('location') || '';
+      const category = urlParams.get('category') || '';
+      document.getElementById('searchInput').value = q;
+      document.getElementById('categoryInput').value = category;
+
+      loadJobs({ q, location, category });
+    });
+
+    function updateAuthUI() {
+      const authButtons = document.getElementById('authButtons');
+      const userMenu = document.getElementById('userMenu');
+      if (authToken && currentUser) {
+        authButtons.classList.add('hidden');
+        userMenu.classList.remove('hidden');
+        userMenu.classList.add('flex');
+        document.getElementById('userGreeting').textContent = `Hi, ${currentUser.name} (${currentUser.role})`;
+      } else {
+        authButtons.classList.remove('hidden');
+        userMenu.classList.add('hidden');
+        userMenu.classList.remove('flex');
+      }
+    }
+    function logoutUser() {
+      authToken = null; currentUser = null;
+      localStorage.removeItem('jobnest_token'); localStorage.removeItem('jobnest_user');
+      updateAuthUI();
+    }
+    function setSignupRole(role) {
+      signupRole = role;
+      document.querySelectorAll('.signupRoleBtn').forEach(btn => {
+        const active = btn.dataset.role === role;
+        btn.classList.toggle('border-brand-600', active);
+        btn.classList.toggle('bg-brand-50', active);
+        btn.classList.toggle('text-brand-700', active);
+        btn.classList.toggle('border-slate-200', !active);
+        btn.classList.toggle('text-slate-600', !active);
+      });
+      document.getElementById('signupCompany').classList.toggle('hidden', role !== 'employer');
+    }
+
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('signupSubmitBtn');
+      const errorBox = document.getElementById('signupError');
+      errorBox.classList.add('hidden'); btn.disabled = true; btn.textContent = 'Creating account…';
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/signup`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('signupName').value.trim(),
+            email: document.getElementById('signupEmail').value.trim(),
+            password: document.getElementById('signupPassword').value,
+            role: signupRole,
+            companyName: document.getElementById('signupCompany').value.trim(),
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Signup failed');
+        authToken = data.token; currentUser = data.user;
+        localStorage.setItem('jobnest_token', authToken);
+        localStorage.setItem('jobnest_user', JSON.stringify(currentUser));
+        updateAuthUI(); closeModal('signupModal'); document.getElementById('signupForm').reset();
+      } catch (err) {
+        errorBox.textContent = err.message; errorBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Create Account';
+      }
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('loginSubmitBtn');
+      const errorBox = document.getElementById('loginError');
+      errorBox.classList.add('hidden'); btn.disabled = true; btn.textContent = 'Logging in…';
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('loginEmail').value.trim(),
+            password: document.getElementById('loginPassword').value,
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+        authToken = data.token; currentUser = data.user;
+        localStorage.setItem('jobnest_token', authToken);
+        localStorage.setItem('jobnest_user', JSON.stringify(currentUser));
+        updateAuthUI(); closeModal('loginModal'); document.getElementById('loginForm').reset();
+      } catch (err) {
+        errorBox.textContent = err.message; errorBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Login';
+      }
+    });
+
+    document.getElementById('postJobForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('postJobSubmitBtn');
+      const errorBox = document.getElementById('postJobError');
+      errorBox.classList.add('hidden');
+      if (!authToken || !currentUser) { errorBox.textContent = 'Please login first to post a job.'; errorBox.classList.remove('hidden'); return; }
+      if (currentUser.role !== 'employer') { errorBox.textContent = 'Only Employer accounts can post jobs. Please sign up as an Employer.'; errorBox.classList.remove('hidden'); return; }
+      btn.disabled = true; btn.textContent = 'Publishing…';
+      try {
+        const res = await fetch(`${API_BASE}/api/jobs`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+          body: JSON.stringify({
+            title: document.getElementById('jobTitle').value.trim(),
+            companyName: document.getElementById('jobCompanyName').value.trim(),
+            description: document.getElementById('jobDescription').value.trim(),
+            category: document.getElementById('jobCategory').value,
+            type: document.getElementById('jobType').value,
+            locationType: document.getElementById('jobLocationType').value,
+            country: document.getElementById('jobCountry').value.trim(),
+            salaryRange: document.getElementById('jobSalary').value.trim(),
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not publish job');
+        closeModal('postJobModal'); document.getElementById('postJobForm').reset();
+        currentLimit = 15;
+        loadJobs({});
+      } catch (err) {
+        errorBox.textContent = err.message; errorBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Publish Job';
+      }
+    });
+
+    async function loadJobs(params = {}) {
+      const container = document.getElementById('jobListingsContainer');
+      container.innerHTML = `<div class="text-sm text-slate-500 py-6 text-center">Loading jobs...</div>`;
+      document.getElementById('loadMoreBtn').classList.add('hidden');
+
+      const limit = params.limit || currentLimit;
+      const qs = new URLSearchParams();
+      if (params.q) qs.set('q', params.q);
+      if (params.location) qs.set('location', params.location);
+      if (params.category) qs.set('category', params.category);
+      qs.set('limit', limit);
+
+      const isUnfiltered = !params.q && !params.location && !params.category;
+      const qsStr = '?' + qs.toString();
+
+      try {
+        const [internalRes, externalRes] = await Promise.all([
+          fetch(`${API_BASE}/api/jobs${qsStr}`),
+          fetch(`${API_BASE}/api/jobs/external${qsStr}`).catch(() => null),
+        ]);
+        const internalData = await internalRes.json();
+        if (!internalRes.ok) throw new Error(internalData.error || 'Could not load jobs');
+
+        let externalJobs = [];
+        if (externalRes && externalRes.ok) {
+          const externalData = await externalRes.json();
+          externalJobs = externalData.jobs || [];
+        }
+
+        const combined = [...(internalData.jobs || []), ...externalJobs];
+        combined.sort((a, b) => priorityRank(a.companyName) - priorityRank(b.companyName));
+
+        renderJobs(combined);
+        document.getElementById('resultsHeading').textContent = `${combined.length} Job${combined.length === 1 ? '' : 's'} Found`;
+        document.getElementById('loadMoreBtn').classList.toggle('hidden', combined.length < limit);
+        if (isUnfiltered) populateLocationOptions(internalData.jobs || []);
+      } catch (err) {
+        container.innerHTML = `<p class="text-sm text-red-600 py-6 text-center">${escapeHtml(err.message)}</p>`;
+      }
+    }
+
+    function loadMore() {
+      currentLimit = Math.min(currentLimit + 15, 100);
+      loadJobs({
+        q: document.getElementById('searchInput').value.trim(),
+        location: document.getElementById('locationInput').value,
+        category: document.getElementById('categoryInput').value,
+        limit: currentLimit,
+      });
+    }
+
+    function populateLocationOptions(jobs) {
+      const select = document.getElementById('locationInput');
+      const current = select.value;
+      const values = new Set();
+      jobs.forEach(job => { if (job.country) values.add(job.country); if (job.locationType) values.add(job.locationType); });
+      const sorted = [...values].sort();
+      select.innerHTML = '<option value="">All Locations</option>' + sorted.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+      if (sorted.includes(current)) select.value = current;
+    }
+
+    function handleFilterChange() {
+      currentLimit = 15;
+      loadJobs({
+        q: document.getElementById('searchInput').value.trim(),
+        location: document.getElementById('locationInput').value,
+        category: document.getElementById('categoryInput').value,
+      });
+    }
+    let searchDebounceTimer = null;
+    function debouncedFilterChange() {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(handleFilterChange, 400);
+    }
+    function handleSearch(e) {
+      e.preventDefault();
+      handleFilterChange();
+    }
+
+    function renderJobs(jobArray) {
+      const container = document.getElementById('jobListingsContainer');
+      container.innerHTML = '';
+      if (jobArray.length === 0) {
+        container.innerHTML = `<p class="text-sm text-slate-600 py-6 text-center">No job openings found matching your query.</p>`;
+        return;
+      }
+      jobArray.forEach(job => {
+        const isExternal = job.source === 'external';
+        const logoUrl = getKnownCompanyLogo(job.companyName);
+        const item = document.createElement('div');
+        item.className = "bg-white p-5 rounded-2xl border border-slate-100/70 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" + (isExternal ? ' cursor-pointer' : '');
+        if (isExternal && job.applyUrl) item.addEventListener('click', () => window.open(job.applyUrl, '_blank'));
+        item.innerHTML = `
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2.5 shrink-0 overflow-hidden">
+              ${logoUrl
+                ? `<img src="${logoUrl}" alt="${escapeHtml(job.companyName || '')}" class="w-full h-full object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><i data-lucide="building-2" class="w-6 h-6 text-slate-400" style="display:none"></i>`
+                : `<i data-lucide="building-2" class="w-6 h-6 text-slate-400"></i>`}
+            </div>
+            <div>
+              <h4 class="font-extrabold text-slate-950 text-base leading-tight">${escapeHtml(job.title || '')}</h4>
+              <p class="text-xs text-slate-600 font-medium mt-0.5">${escapeHtml(job.companyName || '')}</p>
+              <div class="flex items-center gap-2 mt-2.5">
+                <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-md">${escapeHtml(job.type || '')}</span>
+                <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-[11px] font-bold rounded-md">${escapeHtml(job.locationType || '')}</span>
+                ${isExternal ? `<span class="px-2.5 py-0.5 bg-violet-50 text-violet-700 text-[11px] font-bold rounded-md">Live</span>` : ''}
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-row sm:flex-col items-end justify-between w-full sm:w-auto mt-2 sm:mt-0 text-right">
+            <div class="flex items-center gap-1.5 text-xs text-slate-600 font-semibold">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i> ${escapeHtml(job.country || '')}
+            </div>
+            <div class="text-xs font-extrabold text-slate-800 mt-1.5">${escapeHtml(job.salaryRange || '')}</div>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
+    function closeMobileMenu() { document.getElementById('mobileMenu').classList.add('hidden'); }
+    function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+  </script>
+</body>
+</html>
