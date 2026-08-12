@@ -48,7 +48,7 @@
           </button>
           <div class="absolute left-0 top-full pt-2 w-48 hidden group-hover:block">
             <div class="bg-white rounded-xl shadow-xl border border-slate-100 p-2 text-slate-700">
-              <a href="#jobListingsContainer" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Browse All Jobs</a>
+              <a href="jobs.html" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Browse All Jobs</a>
               <a href="#" onclick="quickFilter('', 'Remote'); return false;" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Remote Jobs</a>
               <a href="#" onclick="quickFilterCategory('Engineering'); return false;" class="block px-3 py-2 rounded-lg hover:bg-slate-50 text-xs font-semibold">Tech & IT</a>
             </div>
@@ -94,7 +94,7 @@
     <!-- Mobile nav panel — hidden by default, toggled on small screens -->
     <div id="mobileMenu" class="hidden md:hidden border-t border-slate-100 bg-white px-4 py-4 space-y-1">
       <a href="#" onclick="closeMobileMenu()" class="block px-3 py-2.5 rounded-lg font-bold text-sm text-brand-600 bg-brand-50">Home</a>
-      <a href="#jobListingsContainer" onclick="closeMobileMenu()" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">Find Jobs</a>
+      <a href="jobs.html" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">Find Jobs</a>
       <a href="#" onclick="openModal('postJobModal'); closeMobileMenu(); return false;" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">Employers — Post a Job</a>
       <a href="#" onclick="closeMobileMenu()" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">Pricing</a>
       <a href="about.html" class="block px-3 py-2.5 rounded-lg font-semibold text-sm text-slate-700 hover:bg-slate-50">About Us</a>
@@ -212,7 +212,7 @@
       <div class="lg:col-span-8 space-y-5">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-extrabold text-slate-950">Latest Job Openings</h2>
-          <a href="#" onclick="viewAllJobs(); return false;" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+          <a href="#" onclick="goToAllJobs(); return false;" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
             View All <i data-lucide="chevron-right" class="w-4 h-4"></i>
           </a>
         </div>
@@ -341,7 +341,7 @@
     let authToken = localStorage.getItem('jobnest_token') || null;
     let currentUser = JSON.parse(localStorage.getItem('jobnest_user') || 'null');
     let signupRole = 'seeker';
-    let currentLimit = 12; // grows each time "View All" is clicked
+    let currentLimit = 3; // homepage shows just a few — "View All" goes to the full jobs page
 
     // Recognizable big-brand logos (via Clearbit's public logo API) so jobs
     // from these companies show a real logo instead of a generic icon, and
@@ -373,15 +373,27 @@
     // (Clearbit etc.) are unreliable — many small companies aren't listed,
     // and logo requests can get silently blocked by ad-blockers. A local
     // "initials" avatar always renders instantly with zero network calls.
-    const AVATAR_COLORS = ['#2563eb', '#7c3aed', '#059669', '#d97706', '#dc2626', '#0891b2', '#db2777', '#4f46e5'];
+    // Uses the same soft pastel palette as the feature-card icons elsewhere
+    // on the site (bg-blue-50/text-blue-600 etc.) instead of loud colors.
+    const AVATAR_PALETTE = [
+      { bg: 'bg-blue-50', text: 'text-blue-600' },
+      { bg: 'bg-purple-50', text: 'text-purple-600' },
+      { bg: 'bg-emerald-50', text: 'text-emerald-600' },
+      { bg: 'bg-amber-50', text: 'text-amber-600' },
+      { bg: 'bg-indigo-50', text: 'text-indigo-600' },
+      { bg: 'bg-rose-50', text: 'text-rose-600' },
+      { bg: 'bg-cyan-50', text: 'text-cyan-600' },
+      { bg: 'bg-teal-50', text: 'text-teal-600' },
+    ];
     function getInitialsAvatar(name) {
       const clean = (name || '').trim();
-      if (!clean) return { initials: '?', color: '#94a3b8' };
+      if (!clean) return { initials: '?', bg: 'bg-slate-100', text: 'text-slate-500' };
       const words = clean.split(/\s+/).filter(Boolean);
       const initials = ((words[0]?.[0] || '') + (words[1]?.[0] || '')).toUpperCase() || clean[0].toUpperCase();
       let hash = 0;
       for (let i = 0; i < clean.length; i++) hash = clean.charCodeAt(i) + ((hash << 5) - hash);
-      return { initials, color: AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length] };
+      const { bg, text } = AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length];
+      return { initials, bg, text };
     }
 
     function priorityRank(name) {
@@ -607,15 +619,17 @@
       }
     }
 
-    // "View All" — shows more results without losing whatever filter is active.
-    function viewAllJobs() {
-      currentLimit = Math.min(currentLimit + 20, 60);
-      loadJobs({
-        q: document.getElementById('searchInput').value.trim(),
-        location: document.getElementById('locationInput').value,
-        category: document.getElementById('categoryInput').value,
-        limit: currentLimit,
-      });
+    // "View All" — takes the visitor to a dedicated jobs listing page,
+    // carrying over whatever search/filter is currently active.
+    function goToAllJobs() {
+      const qs = new URLSearchParams();
+      const q = document.getElementById('searchInput').value.trim();
+      const location = document.getElementById('locationInput').value;
+      const category = document.getElementById('categoryInput').value;
+      if (q) qs.set('q', q);
+      if (location) qs.set('location', location);
+      if (category) qs.set('category', category);
+      window.location.href = 'jobs.html' + (qs.toString() ? '?' + qs.toString() : '');
     }
 
     function populateLocationOptions(jobs) {
@@ -670,10 +684,10 @@
         }
         item.innerHTML = `
           <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2 shrink-0 overflow-hidden">
+            <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-2.5 shrink-0 overflow-hidden">
               ${logoUrl
-                ? `<img src="${logoUrl}" alt="${escapeHtml(job.companyName || '')}" class="w-full h-full object-contain" onerror="this.outerHTML='<div class=&quot;w-full h-full rounded-lg flex items-center justify-center text-white text-sm font-extrabold&quot; style=&quot;background:${avatar.color}&quot;>${avatar.initials}</div>'">`
-                : `<div class="w-full h-full rounded-lg flex items-center justify-center text-white text-sm font-extrabold" style="background:${avatar.color}">${avatar.initials}</div>`}
+                ? `<img src="${logoUrl}" alt="${escapeHtml(job.companyName || '')}" class="w-full h-full object-contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><i data-lucide="building-2" class="w-6 h-6 text-slate-400" style="display:none"></i>`
+                : `<i data-lucide="building-2" class="w-6 h-6 text-slate-400"></i>`}
             </div>
             <div>
               <h4 class="font-extrabold text-slate-950 text-base leading-tight">${escapeHtml(job.title || '')}</h4>
