@@ -156,7 +156,7 @@
         <div class="absolute w-[280px] h-[280px] bg-indigo-200/40 rounded-full blur-2xl bottom-0 left-0 pointer-events-none"></div>
         <div class="relative w-full max-w-md">
           <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80">
-            <img src="hero.jpg" alt="Professional Woman Working on Laptop" class="w-full h-[400px] object-cover object-top">
+            <img src="hero.jpg" alt="Professional Woman Working on Laptop" class="w-full h-[400px] object-cover object-top" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800'">
           </div>
           <div class="absolute -top-4 -right-4 z-20 bg-white border border-slate-100 shadow-xl rounded-2xl p-4 flex items-center gap-3">
             <div class="p-2.5 bg-purple-100 text-purple-700 rounded-xl"><i data-lucide="briefcase" class="w-5 h-5"></i></div>
@@ -359,8 +359,20 @@
       oracle: 'https://logo.clearbit.com/oracle.com',
       salesforce: 'https://logo.clearbit.com/salesforce.com',
       samsung: 'https://logo.clearbit.com/samsung.com',
+      flipkart: 'https://logo.clearbit.com/flipkart.com',
+      tcs: 'https://logo.clearbit.com/tcs.com',
+      infosys: 'https://logo.clearbit.com/infosys.com',
+      wipro: 'https://logo.clearbit.com/wipro.com',
+      accenture: 'https://logo.clearbit.com/accenture.com',
+      hcl: 'https://logo.clearbit.com/hcltech.com',
+      cognizant: 'https://logo.clearbit.com/cognizant.com',
+      capgemini: 'https://logo.clearbit.com/capgemini.com',
+      deloitte: 'https://logo.clearbit.com/deloitte.com',
+      swiggy: 'https://logo.clearbit.com/swiggy.com',
+      zomato: 'https://logo.clearbit.com/zomato.com',
+      paytm: 'https://logo.clearbit.com/paytm.com',
     };
-    const PRIORITY_ORDER = ['google', 'microsoft', 'amazon'];
+    const PRIORITY_ORDER = ['google', 'microsoft', 'amazon', 'flipkart', 'apple', 'meta', 'ibm', 'tcs', 'infosys', 'wipro', 'accenture'];
 
     function getKnownCompanyLogo(name) {
       if (!name) return null;
